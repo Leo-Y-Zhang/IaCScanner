@@ -1,0 +1,10 @@
+{
+  "_comment": "INTENTIONALLY INSECURE EXAMPLE - education only. Every secret below is a documented fake (the AWS key is the official example key).",
+  "aws_access_key_id": "AKIAIOSFODNN7EXAMPLE",
+  "github_token": "ghp_000000000000000000000000000000000000",
+  "database": {
+    "host": "db.example.com",
+    "user": "appuser",
+    "password": "hunter2-example-password"
+  }
+}

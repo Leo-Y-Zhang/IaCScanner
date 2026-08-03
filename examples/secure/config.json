@@ -1,0 +1,10 @@
+{
+  "_comment": "Secure counterpart: credentials come from the environment at runtime; nothing sensitive is committed.",
+  "aws_access_key_env": "AWS_ACCESS_KEY_ID",
+  "github_token_env": "GITHUB_TOKEN",
+  "database": {
+    "host": "db.example.com",
+    "user": "appuser",
+    "password_env_var": "DB_PASSWORD"
+  }
+}

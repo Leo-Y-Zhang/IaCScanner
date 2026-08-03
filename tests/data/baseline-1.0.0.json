@@ -1,0 +1,191 @@
+{
+  "tool": "themis-baseline",
+  "schema_version": 1,
+  "findings": [
+    {
+      "rule_id": "TL016",
+      "path": "ci-workflow.yml",
+      "location": "jobs.build.steps[0]"
+    },
+    {
+      "rule_id": "TL017",
+      "path": "ci-workflow.yml",
+      "location": "jobs.build.steps[1]"
+    },
+    {
+      "rule_id": "TL028",
+      "path": "ci-workflow.yml",
+      "location": "jobs.build.steps[2]"
+    },
+    {
+      "rule_id": "TL018",
+      "path": "config.json",
+      "location": "line 3"
+    },
+    {
+      "rule_id": "TL018",
+      "path": "config.json",
+      "location": "line 4"
+    },
+    {
+      "rule_id": "TL018",
+      "path": "config.json",
+      "location": "line 8"
+    },
+    {
+      "rule_id": "TL011",
+      "path": "deployment.yaml",
+      "location": "Deployment/example-app container web"
+    },
+    {
+      "rule_id": "TL012",
+      "path": "deployment.yaml",
+      "location": "Deployment/example-app container sidecar"
+    },
+    {
+      "rule_id": "TL012",
+      "path": "deployment.yaml",
+      "location": "Deployment/example-app container web"
+    },
+    {
+      "rule_id": "TL013",
+      "path": "deployment.yaml",
+      "location": "Deployment/example-app"
+    },
+    {
+      "rule_id": "TL014",
+      "path": "deployment.yaml",
+      "location": "Deployment/example-app container sidecar"
+    },
+    {
+      "rule_id": "TL014",
+      "path": "deployment.yaml",
+      "location": "Deployment/example-app container web"
+    },
+    {
+      "rule_id": "TL015",
+      "path": "deployment.yaml",
+      "location": "Deployment/example-app container sidecar"
+    },
+    {
+      "rule_id": "TL015",
+      "path": "deployment.yaml",
+      "location": "Deployment/example-app container web"
+    },
+    {
+      "rule_id": "TL026",
+      "path": "deployment.yaml",
+      "location": "Deployment/example-app container web"
+    },
+    {
+      "rule_id": "TL027",
+      "path": "deployment.yaml",
+      "location": "Deployment/example-app"
+    },
+    {
+      "rule_id": "TL027",
+      "path": "deployment.yaml",
+      "location": "Deployment/example-app volume host-root"
+    },
+    {
+      "rule_id": "TL001",
+      "path": "main.tf",
+      "location": "aws_s3_bucket.example_data"
+    },
+    {
+      "rule_id": "TL002",
+      "path": "main.tf",
+      "location": "aws_s3_bucket.example_data"
+    },
+    {
+      "rule_id": "TL003",
+      "path": "main.tf",
+      "location": "aws_iam_policy.admin"
+    },
+    {
+      "rule_id": "TL004",
+      "path": "main.tf",
+      "location": "aws_s3_bucket_policy.public_read"
+    },
+    {
+      "rule_id": "TL005",
+      "path": "main.tf",
+      "location": "aws_security_group.admin"
+    },
+    {
+      "rule_id": "TL006",
+      "path": "main.tf",
+      "location": "aws_db_instance.app"
+    },
+    {
+      "rule_id": "TL006",
+      "path": "main.tf",
+      "location": "aws_ebs_volume.scratch"
+    },
+    {
+      "rule_id": "TL007",
+      "path": "main.tf",
+      "location": "aws_s3_bucket.example_data"
+    },
+    {
+      "rule_id": "TL008",
+      "path": "main.tf",
+      "location": "aws_s3_bucket.example_data"
+    },
+    {
+      "rule_id": "TL009",
+      "path": "main.tf",
+      "location": "aws_cloudtrail.main"
+    },
+    {
+      "rule_id": "TL010",
+      "path": "main.tf",
+      "location": "aws_db_instance.app"
+    },
+    {
+      "rule_id": "TL010",
+      "path": "main.tf",
+      "location": "variable.db_password"
+    },
+    {
+      "rule_id": "TL018",
+      "path": "main.tf",
+      "location": "line 50"
+    },
+    {
+      "rule_id": "TL019",
+      "path": "main.tf",
+      "location": "aws_db_instance.app"
+    },
+    {
+      "rule_id": "TL020",
+      "path": "main.tf",
+      "location": "aws_kms_key.example"
+    },
+    {
+      "rule_id": "TL021",
+      "path": "main.tf",
+      "location": "aws_ecr_repository.example"
+    },
+    {
+      "rule_id": "TL022",
+      "path": "main.tf",
+      "location": "aws_efs_file_system.example"
+    },
+    {
+      "rule_id": "TL023",
+      "path": "main.tf",
+      "location": "aws_instance.example"
+    },
+    {
+      "rule_id": "TL024",
+      "path": "main.tf",
+      "location": "aws_dynamodb_table.example"
+    },
+    {
+      "rule_id": "TL025",
+      "path": "main.tf",
+      "location": "aws_db_instance.backups"
+    }
+  ]
+}

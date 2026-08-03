@@ -1,0 +1,30 @@
+# INTENTIONALLY INSECURE EXAMPLE - for education only. Never deploy this.
+# Synthetic manifest used to demonstrate Kubernetes misconfiguration rules.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: example-app
+  template:
+    metadata:
+      labels:
+        app: example-app
+    spec:
+      hostNetwork: true
+      hostPID: true
+      volumes:
+        - name: host-root
+          hostPath:
+            path: /
+      containers:
+        - name: web
+          image: nginx:latest
+          securityContext:
+            privileged: true
+            runAsUser: 0
+        - name: sidecar
+          image: example-sidecar

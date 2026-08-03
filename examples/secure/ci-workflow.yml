@@ -1,0 +1,17 @@
+# Secure counterpart to examples/vulnerable/ci-workflow.yml.
+# Uses the pull_request trigger, checks out the merge ref, and passes
+# secrets through the environment instead of echoing them.
+name: ci
+on: pull_request
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: run tests
+        run: python -m pytest -q
+        env:
+          API_TOKEN: ${{ secrets.API_TOKEN }}

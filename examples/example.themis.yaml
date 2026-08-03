@@ -1,0 +1,45 @@
+# A working policy file, used by the --policy example in README.md.
+#
+# The auto-discovered name is exactly `.themis.yaml` beside the scan target,
+# frozen at its pre-rename spelling on purpose (see "Names that did not
+# change" in the README). This copy is deliberately NOT called that: if it
+# were, it would be discovered automatically and would quietly change the
+# output of every other example command in the README, and of the committed
+# sample artifacts the test suite compares byte-for-byte. Pass it by name:
+#
+#   python -m iacscanner scan examples/vulnerable \
+#       --policy examples/example.themis.yaml
+#
+# Measured against examples/vulnerable, that turns
+#
+#   39 findings (critical 10, high 16, medium 6, low 7)
+#
+# into
+#
+#   37 findings (critical 10, high 16, medium 8, low 3)
+#
+# - the two TL014 findings are suppressed, and the two TL008 findings move
+# from low to medium. Both effects are announced on stderr
+# ("suppressed: 0 inline, 2 by policy"); nothing is hidden quietly.
+
+disable:
+  # TL014 - container CPU/memory limits. Plenty of real clusters set these
+  # with a LimitRange or an admission policy instead of in the manifest. A
+  # team that does it that way turns the rule off once here rather than
+  # sprinkling `# themis:ignore TL014` through every workload file.
+  - TL014
+
+severity:
+  # TL008 - S3 bucket versioning or access logging missing. Ships as low.
+  # A team that has been bitten by an unrecoverable accidental delete cares
+  # more than the default does, so this raises it. Overrides go both ways;
+  # they change the band a finding is reported in, never whether it is
+  # reported.
+  TL008: medium
+
+exclude:
+  # Generated files are not hand-editable, so a finding in one is noise -
+  # the fix belongs in whatever emits the file. No effect on the bundled
+  # examples; it is here because path exclusion is the third thing a policy
+  # can do and an example that omits it teaches two thirds of the format.
+  - "**/generated/**"

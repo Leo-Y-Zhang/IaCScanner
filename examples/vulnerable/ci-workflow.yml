@@ -1,0 +1,17 @@
+# INTENTIONALLY INSECURE EXAMPLE - for education only. Never use this.
+# Demonstrates the pull_request_target + PR-head checkout ("pwn request")
+# pattern and a secret leaked into the build log.
+name: preview
+on: pull_request_target
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: debug deploy token (never do this)
+        run: echo "deploy token is ${{ secrets.DEPLOY_TOKEN }}"
+      - name: deploy with an unpinned third-party action
+        uses: some-org/deploy-action@main

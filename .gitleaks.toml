@@ -1,0 +1,39 @@
+# gitleaks configuration for IaCScanner.
+#
+# IaCScanner is a defensive IaC misconfiguration scanner, so this repo
+# intentionally ships DOCUMENTED synthetic scanner-bait: the
+# examples/vulnerable/ tree is a deliberately insecure teaching sample
+# (its config.json says so in its first line) and the unit tests embed
+# the same fake values to assert rule output. Nothing allowlisted below
+# is a real credential.
+#
+# The allowlist is VALUE-scoped, never path-scoped. An earlier version
+# allowlisted the whole of ^examples/ and ^tests/ by path, which meant a
+# real credential committed anywhere under those trees would have passed
+# this repo's own secret gate -- the same gate CI runs. Those two entries
+# are gone: every literal below names one specific published fake value,
+# so tests/ and examples/ are scanned exactly as strictly as src/. Full
+# history scans clean under this config with the default ruleset intact.
+#
+# If a new fixture needs a credential-shaped value, prefer one the
+# default ruleset does not match; only add a literal here when the shape
+# itself is the point of the fixture, and say where it is used.
+
+[extend]
+# Keep the complete default gitleaks ruleset active; we only add narrow
+# allowlist entries on top of it.
+useDefault = true
+
+[allowlist]
+description = "Canonical published fake secrets used as scanner bait"
+
+regexes = [
+  # AWS documentation's own canonical example access key id (public and
+  # non-functional). Used in examples/vulnerable/config.json and in the
+  # unit tests, and referenced in README.md when describing the
+  # hardcoded-credential rule.
+  '''AKIAIOSFODNN7EXAMPLE''',
+  # All-zero fake GitHub PAT used in examples/vulnerable/config.json;
+  # trivially not a real token.
+  '''ghp_000000000000000000000000000000000000''',
+]

@@ -1,0 +1,2295 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "runs": [
+    {
+      "results": [
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "jobs.build.steps[0]"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ci-workflow.yml"
+                },
+                "region": {
+                  "startLine": 11
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "pull_request_target workflow checks out the PR head"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 16"
+            ],
+            "confidence": "high",
+            "cwe": [
+              "CWE-94"
+            ]
+          },
+          "ruleId": "TL016",
+          "ruleIndex": 16
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "jobs.build.steps[1]"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ci-workflow.yml"
+                },
+                "region": {
+                  "startLine": 14
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "run step echoes a secret into the build log"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 8"
+            ],
+            "confidence": "high",
+            "cwe": [
+              "CWE-532"
+            ]
+          },
+          "ruleId": "TL017",
+          "ruleIndex": 17
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "jobs.build.steps[2]"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ci-workflow.yml"
+                },
+                "region": {
+                  "startLine": 16
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "action 'some-org/deploy-action@main' is pinned to the mutable ref 'main'"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 16"
+            ],
+            "confidence": "medium",
+            "cwe": [
+              "CWE-829"
+            ]
+          },
+          "ruleId": "TL028",
+          "ruleIndex": 28
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "line 3"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "config.json"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "AWS access key ID detected (AKIAIOSF...)"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 3"
+            ],
+            "confidence": "medium",
+            "cwe": [
+              "CWE-798"
+            ]
+          },
+          "ruleId": "TL018",
+          "ruleIndex": 18
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "line 4"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "config.json"
+                },
+                "region": {
+                  "startLine": 4
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "GitHub personal access token detected (ghp_0000...)"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 3"
+            ],
+            "confidence": "medium",
+            "cwe": [
+              "CWE-798"
+            ]
+          },
+          "ruleId": "TL018",
+          "ruleIndex": 18
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "line 8"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "config.json"
+                },
+                "region": {
+                  "startLine": 8
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "hardcoded password assignment detected (hunter2-...)"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 3"
+            ],
+            "confidence": "medium",
+            "cwe": [
+              "CWE-798"
+            ]
+          },
+          "ruleId": "TL018",
+          "ruleIndex": 18
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Deployment/example-app container web"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "deployment.yaml"
+                },
+                "region": {
+                  "startLine": 24
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "container runs privileged"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 6"
+            ],
+            "confidence": "high",
+            "cwe": [
+              "CWE-250"
+            ]
+          },
+          "ruleId": "TL011",
+          "ruleIndex": 11
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Deployment/example-app container sidecar"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "deployment.yaml"
+                },
+                "region": {
+                  "startLine": 29
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "runAsNonRoot is not set"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 6"
+            ],
+            "confidence": "medium",
+            "cwe": [
+              "CWE-250"
+            ]
+          },
+          "ruleId": "TL012",
+          "ruleIndex": 12
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Deployment/example-app container web"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "deployment.yaml"
+                },
+                "region": {
+                  "startLine": 24
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "runAsNonRoot is not set"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 6"
+            ],
+            "confidence": "medium",
+            "cwe": [
+              "CWE-250"
+            ]
+          },
+          "ruleId": "TL012",
+          "ruleIndex": 12
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Deployment/example-app"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "deployment.yaml"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "pod uses hostNetwork: true"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 4"
+            ],
+            "confidence": "high",
+            "cwe": [
+              "CWE-668"
+            ]
+          },
+          "ruleId": "TL013",
+          "ruleIndex": 13
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Deployment/example-app container sidecar"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "deployment.yaml"
+                },
+                "region": {
+                  "startLine": 29
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "no resource limits for cpu and memory"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 4"
+            ],
+            "confidence": "medium",
+            "cwe": [
+              "CWE-400"
+            ]
+          },
+          "ruleId": "TL014",
+          "ruleIndex": 14
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Deployment/example-app container web"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "deployment.yaml"
+                },
+                "region": {
+                  "startLine": 24
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "no resource limits for cpu and memory"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 4"
+            ],
+            "confidence": "medium",
+            "cwe": [
+              "CWE-400"
+            ]
+          },
+          "ruleId": "TL014",
+          "ruleIndex": 14
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Deployment/example-app container sidecar"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "deployment.yaml"
+                },
+                "region": {
+                  "startLine": 29
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "image 'example-sidecar' has no tag"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 4"
+            ],
+            "confidence": "medium",
+            "cwe": [
+              "CWE-1104"
+            ]
+          },
+          "ruleId": "TL015",
+          "ruleIndex": 15
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Deployment/example-app container web"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "deployment.yaml"
+                },
+                "region": {
+                  "startLine": 24
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "image 'nginx:latest' uses :latest"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 4"
+            ],
+            "confidence": "medium",
+            "cwe": [
+              "CWE-1104"
+            ]
+          },
+          "ruleId": "TL015",
+          "ruleIndex": 15
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Deployment/example-app container web"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "deployment.yaml"
+                },
+                "region": {
+                  "startLine": 24
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "container runAsUser is 0 (root)"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 4"
+            ],
+            "confidence": "high",
+            "cwe": [
+              "CWE-250"
+            ]
+          },
+          "ruleId": "TL026",
+          "ruleIndex": 26
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Deployment/example-app"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "deployment.yaml"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "pod sets hostPID: true"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 4"
+            ],
+            "confidence": "high",
+            "cwe": [
+              "CWE-668"
+            ]
+          },
+          "ruleId": "TL027",
+          "ruleIndex": 27
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Deployment/example-app volume host-root"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "deployment.yaml"
+                },
+                "region": {
+                  "startLine": 20
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "mounts host path '/'"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 4"
+            ],
+            "confidence": "high",
+            "cwe": [
+              "CWE-668"
+            ]
+          },
+          "ruleId": "TL027",
+          "ruleIndex": 27
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_s3_bucket.example_data"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 12
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "bucket ACL is 'public-read'"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 3"
+            ],
+            "confidence": "high",
+            "cwe": [
+              "CWE-284"
+            ]
+          },
+          "ruleId": "TL001",
+          "ruleIndex": 1
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_s3_bucket.example_data"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 12
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "no public access block protects this bucket"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 3"
+            ],
+            "confidence": "medium",
+            "cwe": [
+              "CWE-284"
+            ]
+          },
+          "ruleId": "TL002",
+          "ruleIndex": 2
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_iam_policy.admin"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 61
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "policy statement allows Action '*'"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 6"
+            ],
+            "confidence": "high",
+            "cwe": [
+              "CWE-269"
+            ]
+          },
+          "ruleId": "TL003",
+          "ruleIndex": 3
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_s3_bucket_policy.public_read"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 73
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "policy statement allows Principal '*'"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 6"
+            ],
+            "confidence": "high",
+            "cwe": [
+              "CWE-284"
+            ]
+          },
+          "ruleId": "TL004",
+          "ruleIndex": 4
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_security_group.admin"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 17
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "ingress open to the world on RDP"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 4"
+            ],
+            "confidence": "high",
+            "cwe": [
+              "CWE-284"
+            ]
+          },
+          "ruleId": "TL005",
+          "ruleIndex": 5
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_security_group.admin"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 17
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "ingress open to the world on SSH"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 4"
+            ],
+            "confidence": "high",
+            "cwe": [
+              "CWE-284"
+            ]
+          },
+          "ruleId": "TL005",
+          "ruleIndex": 5
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_db_instance.app"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 44
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "RDS storage is not encrypted"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 3"
+            ],
+            "confidence": "high",
+            "cwe": [
+              "CWE-311"
+            ]
+          },
+          "ruleId": "TL006",
+          "ruleIndex": 6
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_ebs_volume.scratch"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 38
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "EBS volume is not encrypted"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 3"
+            ],
+            "confidence": "high",
+            "cwe": [
+              "CWE-311"
+            ]
+          },
+          "ruleId": "TL006",
+          "ruleIndex": 6
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_s3_bucket.example_data"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 12
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "no server-side encryption configuration protects this bucket"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 3"
+            ],
+            "confidence": "medium",
+            "cwe": [
+              "CWE-311"
+            ]
+          },
+          "ruleId": "TL007",
+          "ruleIndex": 7
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_s3_bucket.example_data"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 12
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "bucket access logging is not enabled"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 8"
+            ],
+            "confidence": "medium",
+            "cwe": [
+              "CWE-778"
+            ]
+          },
+          "ruleId": "TL008",
+          "ruleIndex": 8
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_s3_bucket.example_data"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 12
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "bucket versioning is not enabled"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 8"
+            ],
+            "confidence": "medium",
+            "cwe": [
+              "CWE-778"
+            ]
+          },
+          "ruleId": "TL008",
+          "ruleIndex": 8
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_cloudtrail.main"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 55
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "enable_logging is set to false"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 8"
+            ],
+            "confidence": "high",
+            "cwe": [
+              "CWE-778"
+            ]
+          },
+          "ruleId": "TL009",
+          "ruleIndex": 9
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_db_instance.app"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 44
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "attribute 'password' holds a hardcoded literal"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 3"
+            ],
+            "confidence": "high",
+            "cwe": [
+              "CWE-798"
+            ]
+          },
+          "ruleId": "TL010",
+          "ruleIndex": 10
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "variable.db_password"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 6
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "secret-looking variable has a hardcoded default"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 3"
+            ],
+            "confidence": "high",
+            "cwe": [
+              "CWE-798"
+            ]
+          },
+          "ruleId": "TL010",
+          "ruleIndex": 10
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "line 50"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 50
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "hardcoded password assignment detected (hunter2-...)"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 3"
+            ],
+            "confidence": "medium",
+            "cwe": [
+              "CWE-798"
+            ]
+          },
+          "ruleId": "TL018",
+          "ruleIndex": 18
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_db_instance.app"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 44
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "database instance is publicly accessible"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 4"
+            ],
+            "confidence": "high",
+            "cwe": [
+              "CWE-284"
+            ]
+          },
+          "ruleId": "TL019",
+          "ruleIndex": 19
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_kms_key.example"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 92
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "automatic key rotation is disabled"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 3"
+            ],
+            "confidence": "high",
+            "cwe": [
+              "CWE-320"
+            ]
+          },
+          "ruleId": "TL020",
+          "ruleIndex": 20
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_ecr_repository.example"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 97
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "image scan-on-push is disabled"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 7"
+            ],
+            "confidence": "high",
+            "cwe": [
+              "CWE-693"
+            ]
+          },
+          "ruleId": "TL021",
+          "ruleIndex": 21
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_efs_file_system.example"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 104
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "EFS file system is not encrypted"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 3"
+            ],
+            "confidence": "high",
+            "cwe": [
+              "CWE-311"
+            ]
+          },
+          "ruleId": "TL022",
+          "ruleIndex": 22
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_instance.example"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 108
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "IMDSv2 is not enforced (http_tokens is 'optional')"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 4"
+            ],
+            "confidence": "high",
+            "cwe": [
+              "CWE-918"
+            ]
+          },
+          "ruleId": "TL023",
+          "ruleIndex": 23
+        },
+        {
+          "level": "note",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_dynamodb_table.example"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 116
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "point-in-time recovery is disabled"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 11"
+            ],
+            "confidence": "medium",
+            "cwe": [
+              "CWE-693"
+            ]
+          },
+          "ruleId": "TL024",
+          "ruleIndex": 24
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_db_instance.backups"
+                }
+              ],
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 124
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "automated backups are disabled (backup_retention_period = 0)"
+          },
+          "properties": {
+            "cis": [
+              "CIS Controls v8 Control 11"
+            ],
+            "confidence": "medium",
+            "cwe": [
+              "CWE-693"
+            ]
+          },
+          "ruleId": "TL025",
+          "ruleIndex": 25
+        }
+      ],
+      "tool": {
+        "driver": {
+          "informationUri": "https://github.com/GreenPandaTech/IaCScanner",
+          "name": "IaCScanner",
+          "rules": [
+            {
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "fullDescription": {
+                "text": "Unparseable IaC files hide misconfigurations from every scanner, including this one."
+              },
+              "help": {
+                "text": "Fix the syntax error so the file can be analyzed (the scan exit code is 2 while parse errors remain)."
+              },
+              "id": "TL000",
+              "name": "File could not be parsed",
+              "properties": {
+                "cis": [],
+                "cwe": [],
+                "security-severity": "3.0",
+                "tags": []
+              },
+              "shortDescription": {
+                "text": "File could not be parsed"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Public bucket ACLs expose every object to anonymous readers and are a leading cause of data leaks."
+              },
+              "help": {
+                "text": "acl = \"private\""
+              },
+              "id": "TL001",
+              "name": "S3 bucket has a public ACL",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 3"
+                ],
+                "cwe": [
+                  "CWE-284"
+                ],
+                "security-severity": "9.5",
+                "tags": [
+                  "CWE-284",
+                  "CIS Controls v8 Control 3"
+                ]
+              },
+              "shortDescription": {
+                "text": "S3 bucket has a public ACL"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Without the account/bucket public access block, a single ACL or policy mistake can make data public."
+              },
+              "help": {
+                "text": "resource \"aws_s3_bucket_public_access_block\" \"this\" {\n  block_public_acls       = true\n  block_public_policy     = true\n  ignore_public_acls      = true\n  restrict_public_buckets = true\n}"
+              },
+              "id": "TL002",
+              "name": "S3 public access block missing or weakened",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 3"
+                ],
+                "cwe": [
+                  "CWE-284"
+                ],
+                "security-severity": "8.0",
+                "tags": [
+                  "CWE-284",
+                  "CIS Controls v8 Control 3"
+                ]
+              },
+              "shortDescription": {
+                "text": "S3 public access block missing or weakened"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Wildcard actions grant far more than intended and defeat least-privilege review."
+              },
+              "help": {
+                "text": "\"Action\": [\"s3:GetObject\"]  // list only the actions actually needed"
+              },
+              "id": "TL003",
+              "name": "IAM policy allows wildcard actions",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 6"
+                ],
+                "cwe": [
+                  "CWE-269"
+                ],
+                "security-severity": "8.0",
+                "tags": [
+                  "CWE-269",
+                  "CIS Controls v8 Control 6"
+                ]
+              },
+              "shortDescription": {
+                "text": "IAM policy allows wildcard actions"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "A wildcard principal lets any AWS account or anonymous user exercise the granted actions."
+              },
+              "help": {
+                "text": "\"Principal\": {\"AWS\": \"arn:aws:iam::123456789012:role/app-role\"}"
+              },
+              "id": "TL004",
+              "name": "IAM policy allows wildcard principal",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 6"
+                ],
+                "cwe": [
+                  "CWE-284"
+                ],
+                "security-severity": "9.5",
+                "tags": [
+                  "CWE-284",
+                  "CIS Controls v8 Control 6"
+                ]
+              },
+              "shortDescription": {
+                "text": "IAM policy allows wildcard principal"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "World-open admin ports are scanned and brute-forced within minutes of exposure."
+              },
+              "help": {
+                "text": "cidr_blocks = [\"10.0.0.0/16\"]  # restrict to a trusted range or use SSM/VPN"
+              },
+              "id": "TL005",
+              "name": "Security group open to the world on an admin port",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 4"
+                ],
+                "cwe": [
+                  "CWE-284"
+                ],
+                "security-severity": "9.5",
+                "tags": [
+                  "CWE-284",
+                  "CIS Controls v8 Control 4"
+                ]
+              },
+              "shortDescription": {
+                "text": "Security group open to the world on an admin port"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Unencrypted storage exposes data if snapshots, volumes, or backups are copied or mis-shared."
+              },
+              "help": {
+                "text": "encrypted = true            # aws_ebs_volume\nstorage_encrypted = true    # aws_db_instance"
+              },
+              "id": "TL006",
+              "name": "EBS volume or RDS storage not encrypted",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 3"
+                ],
+                "cwe": [
+                  "CWE-311"
+                ],
+                "security-severity": "8.0",
+                "tags": [
+                  "CWE-311",
+                  "CIS Controls v8 Control 3"
+                ]
+              },
+              "shortDescription": {
+                "text": "EBS volume or RDS storage not encrypted"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "fullDescription": {
+                "text": "Explicit SSE configuration guarantees objects are encrypted at rest with the intended key."
+              },
+              "help": {
+                "text": "resource \"aws_s3_bucket_server_side_encryption_configuration\" \"this\" {\n  rule {\n    apply_server_side_encryption_by_default {\n      sse_algorithm = \"aws:kms\"\n    }\n  }\n}"
+              },
+              "id": "TL007",
+              "name": "S3 bucket has no server-side encryption configuration",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 3"
+                ],
+                "cwe": [
+                  "CWE-311"
+                ],
+                "security-severity": "5.0",
+                "tags": [
+                  "CWE-311",
+                  "CIS Controls v8 Control 3"
+                ]
+              },
+              "shortDescription": {
+                "text": "S3 bucket has no server-side encryption configuration"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "fullDescription": {
+                "text": "Versioning protects against accidental deletion; access logs support incident investigation."
+              },
+              "help": {
+                "text": "resource \"aws_s3_bucket_versioning\" \"this\" {\n  versioning_configuration { status = \"Enabled\" }\n}\nresource \"aws_s3_bucket_logging\" \"this\" {\n  target_bucket = \"example-log-bucket\"\n  target_prefix = \"s3-access/\"\n}"
+              },
+              "id": "TL008",
+              "name": "S3 bucket versioning or access logging not enabled",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 8"
+                ],
+                "cwe": [
+                  "CWE-778"
+                ],
+                "security-severity": "3.0",
+                "tags": [
+                  "CWE-778",
+                  "CIS Controls v8 Control 8"
+                ]
+              },
+              "shortDescription": {
+                "text": "S3 bucket versioning or access logging not enabled"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Disabling CloudTrail removes the audit trail attackers most want gone."
+              },
+              "help": {
+                "text": "enable_logging = true"
+              },
+              "id": "TL009",
+              "name": "CloudTrail logging disabled",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 8"
+                ],
+                "cwe": [
+                  "CWE-778"
+                ],
+                "security-severity": "8.0",
+                "tags": [
+                  "CWE-778",
+                  "CIS Controls v8 Control 8"
+                ]
+              },
+              "shortDescription": {
+                "text": "CloudTrail logging disabled"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Literal secrets in .tf files end up in version control and state files."
+              },
+              "help": {
+                "text": "variable \"db_password\" {\n  type      = string\n  sensitive = true      # supply the value at deploy time\n}"
+              },
+              "id": "TL010",
+              "name": "Hardcoded secret in Terraform variable or resource",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 3"
+                ],
+                "cwe": [
+                  "CWE-798"
+                ],
+                "security-severity": "8.0",
+                "tags": [
+                  "CWE-798",
+                  "CIS Controls v8 Control 3"
+                ]
+              },
+              "shortDescription": {
+                "text": "Hardcoded secret in Terraform variable or resource"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Privileged containers can access host devices and typically escape to the node."
+              },
+              "help": {
+                "text": "securityContext:\n  privileged: false\n  allowPrivilegeEscalation: false"
+              },
+              "id": "TL011",
+              "name": "Container runs privileged",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 6"
+                ],
+                "cwe": [
+                  "CWE-250"
+                ],
+                "security-severity": "9.5",
+                "tags": [
+                  "CWE-250",
+                  "CIS Controls v8 Control 6"
+                ]
+              },
+              "shortDescription": {
+                "text": "Container runs privileged"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "fullDescription": {
+                "text": "Root inside a container amplifies any container escape or file mount mistake."
+              },
+              "help": {
+                "text": "securityContext:\n  runAsNonRoot: true"
+              },
+              "id": "TL012",
+              "name": "runAsNonRoot missing or false",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 6"
+                ],
+                "cwe": [
+                  "CWE-250"
+                ],
+                "security-severity": "5.0",
+                "tags": [
+                  "CWE-250",
+                  "CIS Controls v8 Control 6"
+                ]
+              },
+              "shortDescription": {
+                "text": "runAsNonRoot missing or false"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Host networking bypasses network policy and exposes node-local services to the pod."
+              },
+              "help": {
+                "text": "hostNetwork: false  # or simply omit the field"
+              },
+              "id": "TL013",
+              "name": "Pod uses the host network",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 4"
+                ],
+                "cwe": [
+                  "CWE-668"
+                ],
+                "security-severity": "8.0",
+                "tags": [
+                  "CWE-668",
+                  "CIS Controls v8 Control 4"
+                ]
+              },
+              "shortDescription": {
+                "text": "Pod uses the host network"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "fullDescription": {
+                "text": "Unbounded containers can starve the node, a denial-of-service and noisy-neighbor risk."
+              },
+              "help": {
+                "text": "resources:\n  limits:\n    cpu: 500m\n    memory: 256Mi"
+              },
+              "id": "TL014",
+              "name": "Container has no resource limits",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 4"
+                ],
+                "cwe": [
+                  "CWE-400"
+                ],
+                "security-severity": "3.0",
+                "tags": [
+                  "CWE-400",
+                  "CIS Controls v8 Control 4"
+                ]
+              },
+              "shortDescription": {
+                "text": "Container has no resource limits"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "fullDescription": {
+                "text": "Mutable tags make deployments unreproducible and let unexpected images roll out."
+              },
+              "help": {
+                "text": "image: nginx:1.27.1  # pin a version, or better, a digest"
+              },
+              "id": "TL015",
+              "name": "Image is untagged or uses :latest",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 4"
+                ],
+                "cwe": [
+                  "CWE-1104"
+                ],
+                "security-severity": "3.0",
+                "tags": [
+                  "CWE-1104",
+                  "CIS Controls v8 Control 4"
+                ]
+              },
+              "shortDescription": {
+                "text": "Image is untagged or uses :latest"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "pull_request_target runs with repository secrets; executing attacker-controlled PR code with them is a known takeover pattern."
+              },
+              "help": {
+                "text": "on: pull_request  # or keep pull_request_target but never check out the PR head"
+              },
+              "id": "TL016",
+              "name": "pull_request_target checks out untrusted PR code",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 16"
+                ],
+                "cwe": [
+                  "CWE-94"
+                ],
+                "security-severity": "9.5",
+                "tags": [
+                  "CWE-94",
+                  "CIS Controls v8 Control 16"
+                ]
+              },
+              "shortDescription": {
+                "text": "pull_request_target checks out untrusted PR code"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Log masking is best-effort; transformed or partial secrets routinely leak through build logs."
+              },
+              "help": {
+                "text": "env:\n  API_TOKEN: ${{ secrets.API_TOKEN }}  # pass via env, never echo it"
+              },
+              "id": "TL017",
+              "name": "Secret echoed into the build log",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 8"
+                ],
+                "cwe": [
+                  "CWE-532"
+                ],
+                "security-severity": "8.0",
+                "tags": [
+                  "CWE-532",
+                  "CIS Controls v8 Control 8"
+                ]
+              },
+              "shortDescription": {
+                "text": "Secret echoed into the build log"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Credentials committed to configuration files spread through clones, backups, and CI caches and must be treated as compromised."
+              },
+              "help": {
+                "text": "Remove the literal value, rotate the credential, and load it from an environment variable or secret manager."
+              },
+              "id": "TL018",
+              "name": "Hardcoded credential pattern in file",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 3"
+                ],
+                "cwe": [
+                  "CWE-798"
+                ],
+                "security-severity": "9.5",
+                "tags": [
+                  "CWE-798",
+                  "CIS Controls v8 Control 3"
+                ]
+              },
+              "shortDescription": {
+                "text": "Hardcoded credential pattern in file"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "A publicly accessible database gets a public IP and is reachable from the internet; combined with a permissive security group it exposes data to credential-stuffing and direct attack."
+              },
+              "help": {
+                "text": "publicly_accessible = false  # keep the database in private subnets"
+              },
+              "id": "TL019",
+              "name": "RDS instance is publicly accessible",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 4"
+                ],
+                "cwe": [
+                  "CWE-284"
+                ],
+                "security-severity": "8.0",
+                "tags": [
+                  "CWE-284",
+                  "CIS Controls v8 Control 4"
+                ]
+              },
+              "shortDescription": {
+                "text": "RDS instance is publicly accessible"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "fullDescription": {
+                "text": "Without automatic rotation, a long-lived KMS key that is ever exposed keeps decrypting old and new data indefinitely."
+              },
+              "help": {
+                "text": "enable_key_rotation = true"
+              },
+              "id": "TL020",
+              "name": "KMS key rotation disabled",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 3"
+                ],
+                "cwe": [
+                  "CWE-320"
+                ],
+                "security-severity": "5.0",
+                "tags": [
+                  "CWE-320",
+                  "CIS Controls v8 Control 3"
+                ]
+              },
+              "shortDescription": {
+                "text": "KMS key rotation disabled"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "fullDescription": {
+                "text": "Without scan-on-push, images with known CVEs are stored and deployed unnoticed; scanning is the cheapest supply-chain check."
+              },
+              "help": {
+                "text": "image_scanning_configuration {\n  scan_on_push = true\n}"
+              },
+              "id": "TL021",
+              "name": "ECR image scan-on-push disabled",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 7"
+                ],
+                "cwe": [
+                  "CWE-693"
+                ],
+                "security-severity": "5.0",
+                "tags": [
+                  "CWE-693",
+                  "CIS Controls v8 Control 7"
+                ]
+              },
+              "shortDescription": {
+                "text": "ECR image scan-on-push disabled"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "An unencrypted shared file system exposes data to anyone who can reach the backing storage or a stray mount target."
+              },
+              "help": {
+                "text": "encrypted  = true\nkms_key_id = \"arn:aws:kms:...:key/...\""
+              },
+              "id": "TL022",
+              "name": "EFS file system not encrypted",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 3"
+                ],
+                "cwe": [
+                  "CWE-311"
+                ],
+                "security-severity": "8.0",
+                "tags": [
+                  "CWE-311",
+                  "CIS Controls v8 Control 3"
+                ]
+              },
+              "shortDescription": {
+                "text": "EFS file system not encrypted"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "IMDSv1 lets any SSRF on the instance harvest its IAM role credentials; IMDSv2 requires a signed, hop-limited token."
+              },
+              "help": {
+                "text": "metadata_options {\n  http_tokens   = \"required\"\n  http_endpoint = \"enabled\"\n}"
+              },
+              "id": "TL023",
+              "name": "IMDSv2 not enforced (IMDSv1 allowed)",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 4"
+                ],
+                "cwe": [
+                  "CWE-918"
+                ],
+                "security-severity": "8.0",
+                "tags": [
+                  "CWE-918",
+                  "CIS Controls v8 Control 4"
+                ]
+              },
+              "shortDescription": {
+                "text": "IMDSv2 not enforced (IMDSv1 allowed)"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "fullDescription": {
+                "text": "Without point-in-time recovery, an accidental or malicious write/delete cannot be rolled back."
+              },
+              "help": {
+                "text": "point_in_time_recovery {\n  enabled = true\n}"
+              },
+              "id": "TL024",
+              "name": "DynamoDB point-in-time recovery disabled",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 11"
+                ],
+                "cwe": [
+                  "CWE-693"
+                ],
+                "security-severity": "3.0",
+                "tags": [
+                  "CWE-693",
+                  "CIS Controls v8 Control 11"
+                ]
+              },
+              "shortDescription": {
+                "text": "DynamoDB point-in-time recovery disabled"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "fullDescription": {
+                "text": "With no automated backups, there is no recovery point after corruption, ransomware, or an errant migration."
+              },
+              "help": {
+                "text": "backup_retention_period = 7  # days of automated backups"
+              },
+              "id": "TL025",
+              "name": "RDS automated backups disabled",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 11"
+                ],
+                "cwe": [
+                  "CWE-693"
+                ],
+                "security-severity": "5.0",
+                "tags": [
+                  "CWE-693",
+                  "CIS Controls v8 Control 11"
+                ]
+              },
+              "shortDescription": {
+                "text": "RDS automated backups disabled"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "A hardcoded UID 0 runs as root even when a policy sets runAsNonRoot, amplifying any container escape."
+              },
+              "help": {
+                "text": "securityContext:\n  runAsUser: 1000\n  runAsNonRoot: true"
+              },
+              "id": "TL026",
+              "name": "Container or pod runs as root by UID",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 4"
+                ],
+                "cwe": [
+                  "CWE-250"
+                ],
+                "security-severity": "8.0",
+                "tags": [
+                  "CWE-250",
+                  "CIS Controls v8 Control 4"
+                ]
+              },
+              "shortDescription": {
+                "text": "Container or pod runs as root by UID"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Host mounts and shared host namespaces give a compromised pod a direct path to read host files or other processes and escape to the node."
+              },
+              "help": {
+                "text": "Remove hostPath volumes and hostPID/hostIPC; use a PersistentVolumeClaim or emptyDir instead."
+              },
+              "id": "TL027",
+              "name": "Pod mounts the host filesystem or namespaces",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 4"
+                ],
+                "cwe": [
+                  "CWE-668"
+                ],
+                "security-severity": "8.0",
+                "tags": [
+                  "CWE-668",
+                  "CIS Controls v8 Control 4"
+                ]
+              },
+              "shortDescription": {
+                "text": "Pod mounts the host filesystem or namespaces"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "A mutable branch ref runs whatever code that branch holds at run time; if the action is compromised or retargeted, it executes in your workflow with its secrets."
+              },
+              "help": {
+                "text": "uses: owner/action@<40-char commit SHA>  # or at least a version tag"
+              },
+              "id": "TL028",
+              "name": "Action pinned to a mutable branch",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 16"
+                ],
+                "cwe": [
+                  "CWE-829"
+                ],
+                "security-severity": "8.0",
+                "tags": [
+                  "CWE-829",
+                  "CIS Controls v8 Control 16"
+                ]
+              },
+              "shortDescription": {
+                "text": "Action pinned to a mutable branch"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "A container that starts as root turns any application compromise into root inside the container and a far stronger position for runtime or kernel escapes; build stages routinely need root, so only the final image's effective user matters."
+              },
+              "help": {
+                "text": "RUN adduser -S app && ...\nUSER app  # in the final stage; root in builder stages is fine"
+              },
+              "id": "TL029",
+              "name": "Final image runs as root",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 4"
+                ],
+                "cwe": [
+                  "CWE-250"
+                ],
+                "security-severity": "8.0",
+                "tags": [
+                  "CWE-250",
+                  "CIS Controls v8 Control 4"
+                ]
+              },
+              "shortDescription": {
+                "text": "Final image runs as root"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "ENV values persist in the image configuration and its layer history, so a baked secret ships to every registry and host that pulls the image - even when a later instruction overwrites the variable."
+              },
+              "help": {
+                "text": "Pass secrets at runtime (orchestrator secret, --env-file) or use a BuildKit secret mount: RUN --mount=type=secret,id=token ..."
+              },
+              "id": "TL030",
+              "name": "Secret baked into the final image environment",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 3"
+                ],
+                "cwe": [
+                  "CWE-798"
+                ],
+                "security-severity": "8.0",
+                "tags": [
+                  "CWE-798",
+                  "CIS Controls v8 Control 3"
+                ]
+              },
+              "shortDescription": {
+                "text": "Secret baked into the final image environment"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "fullDescription": {
+                "text": "A mutable tag silently pulls whatever it points to next, so a compromised or breaking base lands in the shipped image with no diff to review and no way to reproduce yesterday's build."
+              },
+              "help": {
+                "text": "FROM python:3.12.5-slim  # pin a version tag, or better an @sha256: digest"
+              },
+              "id": "TL031",
+              "name": "Final image built from a mutable base tag",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 4"
+                ],
+                "cwe": [
+                  "CWE-1104"
+                ],
+                "security-severity": "3.0",
+                "tags": [
+                  "CWE-1104",
+                  "CIS Controls v8 Control 4"
+                ]
+              },
+              "shortDescription": {
+                "text": "Final image built from a mutable base tag"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "fullDescription": {
+                "text": "Serving SSH from inside a container widens the attack surface and bypasses the orchestrator's access and audit model; CIS Docker guidance is not to run sshd in containers."
+              },
+              "help": {
+                "text": "Remove EXPOSE 22 and use docker exec / kubectl exec for debugging instead of SSH."
+              },
+              "id": "TL032",
+              "name": "Final image exposes the SSH port",
+              "properties": {
+                "cis": [
+                  "CIS Controls v8 Control 4"
+                ],
+                "cwe": [
+                  "CWE-284"
+                ],
+                "security-severity": "5.0",
+                "tags": [
+                  "CWE-284",
+                  "CIS Controls v8 Control 4"
+                ]
+              },
+              "shortDescription": {
+                "text": "Final image exposes the SSH port"
+              }
+            }
+          ],
+          "version": "1.2.0"
+        }
+      }
+    }
+  ],
+  "version": "2.1.0"
+}

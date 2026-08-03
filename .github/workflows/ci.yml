@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  # Both triggers are scoped to main. Left unscoped, a branch with an open PR
+  # fires push AND pull_request and runs the whole gate twice for one commit.
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  # Lets a run be fired without inventing a commit, e.g. to re-verify the gate
+  # after a workflow or runner-configuration change.
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        python-version: ["3.13"]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install -e ".[dev]"
+      - run: ruff check .
+      - run: mypy src/iacscanner
+      - run: pytest -q
+
+  gitleaks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
