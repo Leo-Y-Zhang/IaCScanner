@@ -15,7 +15,7 @@ from iacscanner.models import Finding, Rule, Severity
 from iacscanner.rules import ALL_RULES, get_rule
 from iacscanner.scanner import ScanResult
 
-INFORMATION_URI = "https://github.com/GreenPandaTech/IaCScanner"
+INFORMATION_URI = "https://github.com/Leo-Y-Zhang/IaCScanner"
 
 # SARIF result levels + GitHub's numeric "security-severity" (0.0-10.0) for sorting.
 _LEVEL = {

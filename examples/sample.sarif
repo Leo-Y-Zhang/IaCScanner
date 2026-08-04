@@ -1332,7 +1332,7 @@
       ],
       "tool": {
         "driver": {
-          "informationUri": "https://github.com/GreenPandaTech/IaCScanner",
+          "informationUri": "https://github.com/Leo-Y-Zhang/IaCScanner",
           "name": "IaCScanner",
           "rules": [
             {

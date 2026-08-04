@@ -1,6 +1,6 @@
 # IaCScanner - read-only Infrastructure-as-Code misconfiguration scanner
 
-[![CI](https://github.com/GreenPandaTech/IaCScanner/actions/workflows/ci.yml/badge.svg)](https://github.com/GreenPandaTech/IaCScanner/actions/workflows/ci.yml)
+[![CI](https://github.com/Leo-Y-Zhang/IaCScanner/actions/workflows/ci.yml/badge.svg)](https://github.com/Leo-Y-Zhang/IaCScanner/actions/workflows/ci.yml)
 
 IaCScanner is a defensive, local, **read-only** Infrastructure-as-Code
 scanner. It reads Terraform (HCL), YAML (Kubernetes manifests and GitHub
