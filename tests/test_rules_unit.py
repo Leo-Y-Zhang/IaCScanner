@@ -132,6 +132,27 @@ def test_ig010_ignores_variable_references(tmp_path: Path) -> None:
     assert _check("TL010", sf) == []
 
 
+def test_ig010_siblings_in_one_resource_have_distinct_fingerprints(tmp_path: Path) -> None:
+    """Two secret attributes on ONE resource must not share a baseline identity.
+
+    Both findings anchor to the same resource address, so with an empty sub_key
+    they are the same fingerprint: a baseline that accepted `access_key` also
+    suppresses a `secret_key` added later, and the gate stays green while the
+    tree gets worse - the collision sub_key exists to prevent.
+    """
+    from iacscanner.baseline import fingerprint
+
+    text = (
+        'resource "datadog_integration_aws" "main" {\n'
+        '  access_key = "AKIAIOSFODNN7EXAMPLE"\n'
+        '  secret_key = "not-a-real-secret-value"\n'
+        "}\n"
+    )
+    findings = _check("TL010", parse_snippet(tmp_path, "a.tf", text))
+    assert len(findings) == 2
+    assert len({fingerprint(f) for f in findings}) == 2
+
+
 # --- TL019: publicly accessible RDS ----------------------------------------
 
 def test_ig019_fires_on_publicly_accessible_true(tmp_path: Path) -> None:
@@ -264,6 +285,22 @@ def test_ig018_fires_on_akia_and_ghp(tmp_path: Path) -> None:
     text = '{"key": "AKIAIOSFODNN7EXAMPLE", "tok": "ghp_' + "0" * 36 + '"}\n'
     sf = parse_snippet(tmp_path, "c.json", text)
     assert len(_check("TL018", sf)) == 2
+
+
+def test_ig018_siblings_on_one_line_have_distinct_fingerprints(tmp_path: Path) -> None:
+    """Several secrets on ONE line must not share a baseline identity.
+
+    TL018 anchors to `line N`, which a minified JSON or a single-line env
+    assignment makes a very coarse location: without a sub_key every secret on
+    that line is one fingerprint, so a baseline written when the line held one
+    key silently suppresses the next one added beside it.
+    """
+    from iacscanner.baseline import fingerprint
+
+    text = '{"a": "AKIAIOSFODNN7EXAMPLE", "b": "AKIAIOSFODNN7EXAMPLE", "password": "hunter2-example"}\n'
+    findings = _check("TL018", parse_snippet(tmp_path, "c.json", text))
+    assert len(findings) == 3
+    assert len({fingerprint(f) for f in findings}) == 3
 
 
 def test_ig018_reports_line_numbers(tmp_path: Path) -> None:

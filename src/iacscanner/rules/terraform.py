@@ -214,7 +214,12 @@ def _check_tl010(sf: ScanFile) -> list[Finding]:
         for attr, value in body.items():
             if _SECRET_NAME_RE.search(attr) and _literal_secret(value):
                 findings.append(
-                    TL010.finding(sf, f"{rtype}.{name}", f"attribute '{attr}' holds a hardcoded literal")
+                    # sub_key=attr: one resource can hold several secret-looking
+                    # attributes (access_key next to secret_key), and they all
+                    # anchor to the same resource address.
+                    TL010.finding(
+                        sf, f"{rtype}.{name}", f"attribute '{attr}' holds a hardcoded literal", sub_key=attr
+                    )
                 )
     return findings
 

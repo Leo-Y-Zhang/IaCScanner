@@ -27,13 +27,25 @@ def _check_tl018(sf: ScanFile) -> list[Finding]:
     findings = []
     for lineno, line in enumerate(sf.text.splitlines(), start=1):
         for label, pattern in _PATTERNS:
+            # One line can hold several secrets (a minified JSON object, a
+            # single-line env assignment), and they all anchor to "line N".
+            # Number them so siblings do not share a baseline fingerprint; the
+            # ordinal counts reported findings, never the masked value, which
+            # must not be written into a committed baseline file.
+            ordinal = 0
             for match in pattern.finditer(line):
                 value = match.groupdict().get("value")
                 if value is not None and value.startswith(_REFERENCE_PREFIXES):
                     continue
                 token = value if value is not None else match.group(0)
+                ordinal += 1
                 findings.append(
-                    TL018.finding(sf, f"line {lineno}", f"{label} detected ({_mask(token)})")
+                    TL018.finding(
+                        sf,
+                        f"line {lineno}",
+                        f"{label} detected ({_mask(token)})",
+                        sub_key=f"{label} #{ordinal}",
+                    )
                 )
     return findings
 

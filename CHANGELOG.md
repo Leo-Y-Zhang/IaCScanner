@@ -23,6 +23,18 @@ under that name, with those module paths. See *Unreleased* for the rename.
 
 ### Fixed
 
+- **TL010 and TL018 emitted sibling findings that shared one baseline
+  fingerprint.** Both rules can report several findings at a single location -
+  two secret-looking attributes on one resource (`access_key` beside
+  `secret_key`), several secrets on one line of a minified JSON - and neither
+  passed a `sub_key`, so the quadruple collapsed to a single identity.
+  Measured: a baseline that accepted a hardcoded `access_key` also suppressed
+  a `secret_key` added to that resource afterwards, and the scan exited 0
+  reporting "0 new". TL010 now keys on the attribute name, and TL018 numbers
+  the findings it reports for a line - never the masked value, which must not
+  be written into a committed baseline file. Existing baselines keep
+  suppressing what they always did for every other rule; regenerate to pick up
+  the finer TL010/TL018 identities.
 - README's fingerprint stability contract described the pre-schema-2 **triple**
   `(rule_id, path, location)` and a `TL000`-`TL028` id range. The shipped
   fingerprint is the **quadruple** `(rule_id, path, location, sub_key)` and the

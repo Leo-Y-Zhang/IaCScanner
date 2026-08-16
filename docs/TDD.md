@@ -221,10 +221,10 @@ not. That asymmetry is why unresolved references are returned as literals, why
 rules do not fire on omitted fields, and why the README states its coverage
 limits instead of implying completeness.
 
-## 417 tests, and the two skips that differ by platform
+## 419 tests, and the two skips that differ by platform
 
-417 tests. `ruff check .` clean, and `mypy src/iacscanner` clean under
-`strict = true` from `pyproject.toml`. **415 passed, 2 skipped** on either
+419 tests. `ruff check .` clean, and `mypy src/iacscanner` clean under
+`strict = true` from `pyproject.toml`. **417 passed, 2 skipped** on either
 platform — and the two skips are not the same two. The real-symlink tests skip on
 Windows without the symlink-creation privilege; the real-NTFS-junction tests skip
 anywhere that is not Windows.
