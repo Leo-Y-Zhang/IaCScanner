@@ -58,15 +58,33 @@ def load_policy(path: Path) -> tuple[Policy, list[str]]:
         if key not in _KNOWN_KEYS:
             warnings.append(f"policy has unknown key {key!r}")
 
+    # Each key's container type is checked before it is walked. A scalar is iterable in
+    # Python but means nothing here: `severity: TL001` used to raise AttributeError and
+    # abort the whole scan, `disable: TL014` warned about five unknown rules 'T', 'L',
+    # '0', '1', '4', and `exclude: examples/**` became eleven single-character globs that
+    # excluded nothing at all. All three are user typos and must read as one warning.
+    raw_disable = raw.get("disable") or []
+    if not isinstance(raw_disable, list):
+        warnings.append("policy key 'disable' must be a list of rule ids; ignoring it")
+        raw_disable = []
+    raw_severity = raw.get("severity") or {}
+    if not isinstance(raw_severity, dict):
+        warnings.append("policy key 'severity' must be a mapping of rule id to severity; ignoring it")
+        raw_severity = {}
+    raw_exclude = raw.get("exclude") or []
+    if not isinstance(raw_exclude, list):
+        warnings.append("policy key 'exclude' must be a list of path globs; ignoring it")
+        raw_exclude = []
+
     disabled: set[str] = set()
-    for rid in raw.get("disable") or []:
+    for rid in raw_disable:
         if rid in _VALID_RULE_IDS:
             disabled.add(rid)
         else:
             warnings.append(f"policy disables unknown rule {rid!r}")
 
     overrides: dict[str, Severity] = {}
-    for rid, level in (raw.get("severity") or {}).items():
+    for rid, level in raw_severity.items():
         if rid not in _VALID_RULE_IDS:
             warnings.append(f"policy overrides unknown rule {rid!r}")
             continue
@@ -75,7 +93,7 @@ def load_policy(path: Path) -> tuple[Policy, list[str]]:
         except ValueError:
             warnings.append(f"policy has invalid severity {level!r} for {rid}")
 
-    exclude = tuple(str(pattern) for pattern in (raw.get("exclude") or []))
+    exclude = tuple(str(pattern) for pattern in raw_exclude)
     return Policy(frozenset(disabled), overrides, exclude), warnings
 
 

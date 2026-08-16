@@ -44,6 +44,27 @@ class TestLoad:
         policy, warnings = load_policy(_write(tmp_path / "p.yaml", ""))
         assert policy.disabled == frozenset() and warnings == []
 
+    def test_severity_that_is_not_a_mapping_warns_instead_of_raising(self, tmp_path: Path) -> None:
+        # A list under `severity:` is an easy thing to write by hand; it must not take
+        # the whole scan down with an AttributeError on .items().
+        policy, warnings = load_policy(_write(tmp_path / "p.yaml", "severity:\n  - TL001\n"))
+        assert policy.severity_overrides == {}
+        assert any("severity" in w for w in warnings)
+
+    def test_disable_that_is_not_a_list_warns_once(self, tmp_path: Path) -> None:
+        # `disable: TL014` iterated the string character by character, warning about
+        # five unknown rules 'T', 'L', '0', '1', '4' rather than the real mistake.
+        policy, warnings = load_policy(_write(tmp_path / "p.yaml", "disable: TL014\n"))
+        assert policy.disabled == frozenset()
+        assert len(warnings) == 1 and "disable" in warnings[0]
+
+    def test_exclude_that_is_not_a_list_warns_instead_of_splitting(self, tmp_path: Path) -> None:
+        # `exclude: examples/**` became eleven single-character globs that match nothing,
+        # silently excluding nothing at all.
+        policy, warnings = load_policy(_write(tmp_path / "p.yaml", "exclude: examples/**\n"))
+        assert policy.exclude_paths == ()
+        assert any("exclude" in w for w in warnings)
+
 
 class TestApply:
     def _findings(self) -> list[Finding]:

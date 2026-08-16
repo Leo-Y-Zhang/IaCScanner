@@ -100,8 +100,8 @@ baseline workflow (below) that lets CI fail only on *new* misconfigurations.
   under load, the committed sample report/SARIF are drift-tested against a
   fresh render, and a derandomized Hypothesis suite feeds adversarial text
   through the Dockerfile parser, rules, line attachment, suppressions,
-  SARIF rendering and whole scans (419 pytest tests, ruff + mypy `--strict`
-  clean). Containment is proved twice over with real links, so **417 passed,
+  SARIF rendering and whole scans (422 pytest tests, ruff + mypy `--strict`
+  clean). Containment is proved twice over with real links, so **420 passed,
   2 skipped** is the expected result on *either* platform: the two
   real-symlink discovery tests skip on Windows without the symlink-creation
   privilege, and the two real-NTFS-junction tests skip everywhere that is not
@@ -338,8 +338,10 @@ be picked up automatically and would change the output of every other example
 in this README. Auto-discovery only ever matches `.themis.yaml` beside the
 target; anything else has to be named with `--policy`.
 
-Unknown rule ids, invalid severities, unknown keys, or a non-mapping file
-each emit a `warning:` line on stderr and are ignored - the scan still runs.
+Unknown rule ids, invalid severities, unknown keys, a key whose value is the
+wrong shape (`severity:` given a list, `exclude:` given a bare string), or a
+non-mapping file each emit a `warning:` line on stderr and are ignored - the
+scan still runs.
 A `--policy` path that does not exist is reported the same way (`warning:
 policy file ... could not be read`) and the scan continues unfiltered, so a
 typo cannot silently produce a quieter result that looks like a clean one.
@@ -502,7 +504,7 @@ examples/
   secure-docker/     hardened Dockerfile (deliberate builder-stage decoys)
   sample-report.md   committed markdown report generated from the fixtures
   sample.sarif       committed SARIF 2.1.0 report generated from the fixtures
-tests/               419 tests: rules, graph, scoring, parsers, lines, reports, baseline,
+tests/               422 tests: rules, graph, scoring, parsers, lines, reports, baseline,
                      SARIF, policy, suppress, stress/determinism, drift, CLI e2e,
                      property-based robustness (Hypothesis, derandomized)
 ```

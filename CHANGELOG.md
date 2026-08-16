@@ -23,6 +23,17 @@ under that name, with those module paths. See *Unreleased* for the rename.
 
 ### Fixed
 
+- **A policy key with the wrong value shape crashed the scan.** `load_policy`
+  is documented as total on hostile input ("returns an empty policy plus
+  warnings rather than raising"), but it walked each key without checking its
+  container type: `severity:` given a list raised
+  `AttributeError: 'list' object has no attribute 'items'` and took the whole
+  run down with a traceback, including when the file was an auto-discovered
+  `.themis.yaml`. The two sibling typos were quietly wrong rather than loud -
+  `disable: TL014` iterated the string and warned about five unknown rules
+  'T', 'L', '0', '1', '4', and `exclude: examples/**` became eleven
+  single-character globs that excluded nothing. All three now produce one
+  warning naming the key, and the scan continues.
 - **TL010 and TL018 emitted sibling findings that shared one baseline
   fingerprint.** Both rules can report several findings at a single location -
   two secret-looking attributes on one resource (`access_key` beside
