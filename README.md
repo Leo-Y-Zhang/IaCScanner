@@ -100,8 +100,8 @@ baseline workflow (below) that lets CI fail only on *new* misconfigurations.
   under load, the committed sample report/SARIF are drift-tested against a
   fresh render, and a derandomized Hypothesis suite feeds adversarial text
   through the Dockerfile parser, rules, line attachment, suppressions,
-  SARIF rendering and whole scans (422 pytest tests, ruff + mypy `--strict`
-  clean). Containment is proved twice over with real links, so **420 passed,
+  SARIF rendering and whole scans (423 pytest tests, ruff + mypy `--strict`
+  clean). Containment is proved twice over with real links, so **421 passed,
   2 skipped** is the expected result on *either* platform: the two
   real-symlink discovery tests skip on Windows without the symlink-creation
   privilege, and the two real-NTFS-junction tests skip everywhere that is not
@@ -110,7 +110,11 @@ baseline workflow (below) that lets CI fail only on *new* misconfigurations.
 ## Install
 
 Requires Python 3.10+ (developed on 3.13). Runtime dependencies:
-`python-hcl2` and `pyyaml` only.
+`python-hcl2>=8.1.2` and `pyyaml>=6.0.2` only — no daemon, no cloud SDK, no
+binary toolchain, nothing to configure. Those floors are tested rather than
+declared: a separate CI job installs exactly them and runs the whole suite,
+because an older `python-hcl2` returns HCL booleans as the strings `"true"` and
+`"false"` and quietly changes what the rules conclude.
 
 ```bash
 python -m venv .venv

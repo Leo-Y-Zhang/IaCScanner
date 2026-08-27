@@ -23,6 +23,29 @@ under that name, with those module paths. See *Unreleased* for the rename.
 
 ### Fixed
 
+- **The declared `python-hcl2` floor was four majors below what the code
+  needs, and the near misses were silent.** `pyproject.toml` asked for
+  `python-hcl2>=4.3` while `parsers.py` imports `SerializationOptions` and
+  `lines.py` calls `parses_to_tree`, neither of which exists before 8.x - so
+  `pip install "python-hcl2==7.3.1"` satisfied the constraint and then every
+  `import iacscanner.parsers` died with `ImportError`. Worse than the crash is
+  what happens just under the true floor: 8.1.0 and 8.1.1 import cleanly but
+  return HCL booleans as the strings `"true"` and `"false"` under
+  `strip_string_quotes=True`, which 8.1.2 fixed. Measured on 8.1.1, that alone
+  fails 31 tests of the suite, in both directions - TL019 does not fire on
+  `publicly_accessible = true` (a real finding lost), and the secure Terraform
+  fixture picks up four findings that are not there. A scanner that silently
+  changes its answers on a patch-level dependency bump is worse than one that
+  refuses to start. The floor is now `python-hcl2>=8.1.2,<9`, verified by
+  running the whole suite at exactly 8.1.2 and again at 8.1.3. `pyyaml>=6.0` is
+  raised to `>=6.0.2` for a related reason: 6.0 publishes no cp313 wheel and its
+  sdist does not build there, so the declared floor was not installable on the
+  Python CI runs. None of this was visible because a clean resolve always takes
+  the newest release, so the lower bounds were never once exercised. A new
+  `floor` CI job installs the exact declared minimums and runs the suite against
+  them, and `test_terraform_booleans_parse_as_bool_not_string` asserts the
+  boolean contract directly, so the cause reads as one named failure instead of
+  a 31-test cascade.
 - **A policy key with the wrong value shape crashed the scan.** `load_policy`
   is documented as total on hostile input ("returns an empty policy plus
   warnings rather than raising"), but it walked each key without checking its

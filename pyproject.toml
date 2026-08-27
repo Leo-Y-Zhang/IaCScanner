@@ -11,8 +11,15 @@ license = { text = "Proprietary source-available - see LICENSE" }
 authors = [{ name = "Leo Y. Zhang" }]
 requires-python = ">=3.10"
 dependencies = [
-    "python-hcl2>=4.3",
-    "pyyaml>=6.0",
+    # 8.1.2 is the first release where SerializationOptions(strip_string_quotes=True)
+    # leaves HCL booleans as bool rather than turning them into the strings "true"
+    # and "false". Every earlier release parses, so the failure is silent and lands
+    # in the findings: on 8.1.1 the whole rule set misjudges booleans in both
+    # directions. SerializationOptions and parses_to_tree do not exist at all before
+    # 8.x, so anything under 8 is an ImportError. See the floor job in CI.
+    "python-hcl2>=8.1.2,<9",
+    # 6.0.2 is the first release with a cp313 wheel; 6.0 cannot even build there.
+    "pyyaml>=6.0.2",
 ]
 keywords = ["security", "iac", "terraform", "kubernetes", "static-analysis", "misconfiguration"]
 classifiers = [

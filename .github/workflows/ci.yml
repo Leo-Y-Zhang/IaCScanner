@@ -35,6 +35,26 @@ jobs:
       - run: mypy src/iacscanner
       - run: pytest -q
 
+  # The declared dependency floor, installed and tested rather than assumed. A
+  # clean resolve always takes the newest python-hcl2, so the lower bound was
+  # never exercised: it read >=4.3 while the code needed 8.1.2, and CI was green
+  # throughout. Worse than an ImportError, the near misses parse fine and only
+  # change the answers - on 8.1.1 a boolean comes back as the string "true", so
+  # rules miss real findings and invent false ones. This job pins the exact
+  # floors so raising a lower bound without testing it turns CI red.
+  floor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: pip install -e ".[dev]"
+      - run: pip install "python-hcl2==8.1.2" "pyyaml==6.0.2"
+      - run: pip list
+      - run: pytest -q
+
   # The gitleaks binary directly rather than gitleaks-action, and the whole
   # history rather than a diff. The action scans only the range
   # <before>^..<after> that a push touched, so a secret committed earlier and

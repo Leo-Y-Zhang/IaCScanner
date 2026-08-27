@@ -30,6 +30,24 @@ def test_terraform_file_parses(tmp_path: Path) -> None:
     assert "resource" in sf.data
 
 
+def test_terraform_booleans_parse_as_bool_not_string(tmp_path: Path) -> None:
+    """Pin the python-hcl2 contract the whole Terraform rule set rests on.
+
+    Before python-hcl2 8.1.2, ``strip_string_quotes=True`` handed back the
+    strings ``"true"``/``"false"`` for HCL booleans. Nothing raised; the rules
+    simply stopped agreeing with the file, missing real findings and inventing
+    others. The declared floor now excludes those releases, and this asserts the
+    property directly so the cause is one named failure rather than a scattered
+    cascade across the rule tests.
+    """
+    sf = parse_snippet(
+        tmp_path, "main.tf", 'resource "aws_db_instance" "d" {\n  publicly_accessible = true\n  multi_az = false\n}\n'
+    )
+    body = sf.data["resource"][0]["aws_db_instance"]["d"]
+    assert body["publicly_accessible"] is True
+    assert body["multi_az"] is False
+
+
 def test_kubernetes_yaml_detected(tmp_path: Path) -> None:
     sf = parse_snippet(tmp_path, "pod.yaml", "apiVersion: v1\nkind: Pod\nmetadata:\n  name: p\nspec:\n  containers: []\n")
     assert sf.kind == "kubernetes"
