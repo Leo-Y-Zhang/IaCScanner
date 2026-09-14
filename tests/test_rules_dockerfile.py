@@ -261,6 +261,12 @@ class TestTL029RootUser:
     def test_user_root_with_group_fires(self, tmp_path: Path) -> None:
         assert "TL029" in _ids("TL029", tmp_path, "FROM alpine:3.20\nUSER root:wheel\n")
 
+    def test_quoted_root_user_fires(self, tmp_path: Path) -> None:
+        # The final user token is quote-stripped (`.strip("\"'")`) before comparison, so
+        # a Dockerfile author who quotes the value must still be flagged; no other test
+        # covers a quoted USER value.
+        assert "TL029" in _ids("TL029", tmp_path, 'FROM alpine:3.20\nUSER "root"\n')
+
     def test_named_user_silent(self, tmp_path: Path) -> None:
         assert _ids("TL029", tmp_path, "FROM alpine:3.20\nUSER app\n") == set()
 

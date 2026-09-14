@@ -129,6 +129,14 @@ class TestTL026RootUid:
         text = _POD.format(spec="  securityContext:\n    fsGroup: 0", container="")
         assert "TL026" in _yaml_ids("TL026", tmp_path, text)
 
+    def test_pod_runasuser_zero_fires(self, tmp_path):
+        # The pod-level runAsUser==0 branch (as opposed to the container-level branch
+        # above and the pod-level fsGroup branch tested above) has no other test in the
+        # suite: `_ctx(spec).get("runAsUser")` must be exercised on its own with no
+        # container-level securityContext to mask it.
+        text = _POD.format(spec="  securityContext:\n    runAsUser: 0", container="")
+        assert "TL026" in _yaml_ids("TL026", tmp_path, text)
+
     def test_omitted_silent(self, tmp_path):
         assert "TL026" not in _yaml_ids("TL026", tmp_path, _POD.format(spec="", container=""))
 
@@ -138,9 +146,24 @@ class TestTL027HostMounts:
         text = _POD.format(spec="  hostPID: true", container="")
         assert "TL027" in _yaml_ids("TL027", tmp_path, text)
 
+    def test_hostipc_fires(self, tmp_path):
+        # The hostIPC branch is a separate condition from hostPID/hostPath above and had
+        # no test at all: `spec.get("hostIPC") is True` must be exercised on its own.
+        text = _POD.format(spec="  hostIPC: true", container="")
+        assert "TL027" in _yaml_ids("TL027", tmp_path, text)
+
     def test_hostpath_volume_fires(self, tmp_path):
         text = _POD.format(spec="  volumes:\n    - name: h\n      hostPath:\n        path: /", container="")
         assert "TL027" in _yaml_ids("TL027", tmp_path, text)
+
+    def test_non_hostpath_volume_is_silent_and_does_not_crash(self, tmp_path):
+        # `isinstance(vol, dict) and isinstance(vol.get("hostPath"), dict)` guards the
+        # unconditional `vol["hostPath"].get(...)` that follows. No fixture anywhere in
+        # the suite uses a volume type other than hostPath, so a regression that turns
+        # that `and` into an `or` would enter the branch for every dict-shaped volume
+        # and raise KeyError here instead of just staying silent.
+        text = _POD.format(spec="  volumes:\n    - name: cache\n      emptyDir: {}", container="")
+        assert "TL027" not in _yaml_ids("TL027", tmp_path, text)
 
     def test_no_host_mounts_silent(self, tmp_path):
         assert "TL027" not in _yaml_ids("TL027", tmp_path, _POD.format(spec="", container=""))
@@ -162,3 +185,83 @@ class TestTL028UnpinnedAction:
 
     def test_local_action_silent(self, tmp_path):
         assert "TL028" not in _yaml_ids("TL028", tmp_path, _WORKFLOW.format(uses="./.github/actions/local"))
+
+
+# -- multi-document YAML: a skipped leading document must not stop the scan -----------
+#
+# `kubernetes._pod_specs` and `actions._check_tl016` both walk every document PyYAML
+# parses out of one `---`-separated file, `continue`-ing past a document that is not a
+# recognized workload/workflow so later documents in the same file still get scanned.
+# No fixture anywhere else in the suite puts more than one YAML document in a file, so
+# these guards were untested: a `continue`-to-`break` regression would make the scanner
+# silently stop after the first document instead of raising or being caught any other
+# way.
+
+_PRIVILEGED_DEPLOYMENT = """\
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  template:
+    spec:
+      containers:
+        - name: app
+          image: nginx:1.0
+          securityContext:
+            privileged: true
+"""
+
+
+class TestMultiDocumentYamlKeepsScanningPastASkippedDocument:
+    def test_non_dict_leading_document_does_not_stop_the_scan(self, tmp_path):
+        # First document is a YAML list, not a mapping: `not isinstance(doc, dict)`.
+        text = "- just\n- a\n- list\n---\n" + _PRIVILEGED_DEPLOYMENT
+        assert "TL011" in _yaml_ids("TL011", tmp_path, text)
+
+    def test_non_string_kind_leading_document_does_not_stop_the_scan(self, tmp_path):
+        # First document has a `kind` that isn't a string: `not isinstance(kind, str)`.
+        leading = "apiVersion: v1\nkind: 1\nmetadata:\n  name: x\n"
+        text = leading + "---\n" + _PRIVILEGED_DEPLOYMENT
+        assert "TL011" in _yaml_ids("TL011", tmp_path, text)
+
+    def test_unrecognized_kind_leading_document_does_not_stop_the_scan(self, tmp_path):
+        # First document is a well-formed, ordinary document whose `kind` (ConfigMap)
+        # just isn't a workload: `WORKLOAD_PATHS.get(kind) is None`. This is the
+        # realistic shape - a ConfigMap or Service ahead of a Deployment in one
+        # multi-document manifest, one of the most common ways to author Kubernetes YAML.
+        leading = "apiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: cfg\ndata: {}\n"
+        text = leading + "---\n" + _PRIVILEGED_DEPLOYMENT
+        assert "TL011" in _yaml_ids("TL011", tmp_path, text)
+
+
+_UNTRIGGERED_WORKFLOW = """\
+name: w1
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo hi
+"""
+
+_HEAD_CHECKOUT_WORKFLOW = """\
+name: w2
+on: pull_request_target
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+"""
+
+
+class TestTL016MultiDocumentWorkflow:
+    def test_second_workflow_document_still_checked_for_pull_request_target(self, tmp_path):
+        # `_check_tl016` has the identical "continue past a document this rule doesn't
+        # apply to" pattern one level up: a workflow file whose first `on:` isn't
+        # pull_request_target must not stop the scan before a later document that is.
+        text = _UNTRIGGERED_WORKFLOW + "---\n" + _HEAD_CHECKOUT_WORKFLOW
+        assert "TL016" in _yaml_ids("TL016", tmp_path, text)

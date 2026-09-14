@@ -78,6 +78,37 @@ class TestMissingCompanionStillFires:
         _write(tmp_path, **{"main.tf": _BUCKET, "security.tf": other})
         assert "TL002" in _s3_findings(tmp_path)
 
+    def test_versioning_companion_present_but_disabled_still_fires_tl008(self, tmp_path: Path) -> None:
+        # `_versioning_enabled` is only ever tested at the "absent" and "fully correct"
+        # extremes (see TestCrossFileBindingSilencesFindings and the test above this
+        # class); a companion resource that EXISTS and binds correctly but sets
+        # status = "Disabled" must still count as unprotected. The other companions
+        # (PAB/SSE/logging) stay fully correct so the only TL008 branch that can fire
+        # is the versioning one.
+        weak = _COMPANIONS.replace(
+            'versioning_configuration { status = "Enabled" }',
+            'versioning_configuration { status = "Disabled" }',
+        )
+        _write(tmp_path, **{"main.tf": _BUCKET, "security.tf": weak})
+        assert "TL008" in _s3_findings(tmp_path)
+
+    def test_inline_versioning_block_disabled_still_fires_tl008(self, tmp_path: Path) -> None:
+        # The inline `versioning { enabled = ... }` fast path (checked before the
+        # cross-file companion lookup) has no test at all for the disabled case. No
+        # aws_s3_bucket_versioning companion exists here, so only the inline block can
+        # make `_versioning_enabled` return True.
+        bucket = 'resource "aws_s3_bucket" "data" { bucket = "my-data" versioning { enabled = false } }\n'
+        companions_without_versioning = _COMPANIONS.replace(
+            'resource "aws_s3_bucket_versioning" "data" {\n'
+            "  bucket = aws_s3_bucket.data.id\n"
+            '  versioning_configuration { status = "Enabled" }\n'
+            "}\n",
+            "",
+        )
+        assert "aws_s3_bucket_versioning" not in companions_without_versioning
+        _write(tmp_path, **{"main.tf": bucket, "security.tf": companions_without_versioning})
+        assert "TL008" in _s3_findings(tmp_path)
+
 
 class TestNoFalsePositiveRegression:
     def test_old_file_scoped_false_positive_is_gone(self, tmp_path: Path) -> None:
