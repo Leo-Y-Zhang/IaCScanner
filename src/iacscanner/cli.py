@@ -2,10 +2,10 @@
 
 Exit codes: 0 = clean (no findings at or above --fail-on), 1 = findings
 at or above the --fail-on threshold (default: high), 2 = usage error,
-missing path, malformed/unwritable baseline file, or one or more files
-failed to parse. With --baseline only NEW findings count toward exit
-code 1; a successful --write-baseline run exits 0 (its findings are
-accepted by definition). Parse errors always exit 2.
+missing path, malformed/unwritable baseline file, unwritable --out
+report file, or one or more files failed to parse. With --baseline only
+NEW findings count toward exit code 1; a successful --write-baseline run
+exits 0 (its findings are accepted by definition). Parse errors always exit 2.
 """
 from __future__ import annotations
 
@@ -161,7 +161,13 @@ def _run_scan(args: argparse.Namespace) -> int:
     report = _RENDERERS[args.format](result, findings)
 
     if args.out:
-        Path(args.out).write_text(report, encoding="utf-8")
+        try:
+            Path(args.out).write_text(report, encoding="utf-8")
+        except OSError as exc:
+            # Exit 1 means "findings"; an unwritten report must not read as that
+            # (an uncaught traceback exits 1), nor as a clean run.
+            print(f"error: cannot write report file: {exc}", file=sys.stderr)
+            return 2
     else:
         print(report, end="")
 

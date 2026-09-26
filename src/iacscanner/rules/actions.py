@@ -7,7 +7,10 @@ from typing import Any
 
 from iacscanner.models import KIND_GITHUB_ACTIONS, Finding, Rule, ScanFile, Severity
 
-_HEAD_REF_TOKENS = ("pull_request.head", "head.ref", "head.sha")
+# Checkout refs that resolve to attacker-controlled PR code: the head branch or
+# commit (`github.event.pull_request.head.sha`, `github.head_ref`) or the
+# synthetic merge/head refs GitHub keeps for every PR (`refs/pull/N/merge`).
+_HEAD_REF_TOKENS = ("pull_request.head", "head.ref", "head.sha", "head_ref", "refs/pull/")
 _ECHO_RE = re.compile(r"\b(echo|printf|print)\b")
 
 
@@ -49,7 +52,8 @@ def _check_tl016(sf: ScanFile) -> list[Finding]:
             raw_with = step.get("with")
             with_block = raw_with if isinstance(raw_with, dict) else {}
             ref = str(with_block.get("ref", ""))
-            if isinstance(uses, str) and uses.startswith("actions/checkout") and any(
+            # Owner/repo names are case-insensitive on GitHub.
+            if isinstance(uses, str) and uses.lower().startswith("actions/checkout") and any(
                 token in ref for token in _HEAD_REF_TOKENS
             ):
                 findings.append(
@@ -85,15 +89,34 @@ def _check_tl017(sf: ScanFile) -> list[Finding]:
 _MUTABLE_BRANCHES = {"main", "master", "head", "develop", "trunk", "latest"}
 
 
+def _mutable_ref(uses: Any) -> str | None:
+    """The mutable branch a ``uses:`` value is pinned to, if any."""
+    if not isinstance(uses, str) or "@" not in uses:
+        return None  # a local action/workflow (./path) or no ref
+    ref = uses.rsplit("@", 1)[1]
+    return ref if ref.lower() in _MUTABLE_BRANCHES else None
+
+
 def _check_tl028(sf: ScanFile) -> list[Finding]:
     findings = []
     for doc in _workflows(sf):
+        # A job that calls a reusable workflow (`jobs.<id>.uses`) runs that
+        # workflow's code with the caller's secrets, exactly like a step action.
+        for job_name, job in doc["jobs"].items():
+            uses = job.get("uses") if isinstance(job, dict) else None
+            ref = _mutable_ref(uses)
+            if ref is not None:
+                findings.append(
+                    TL028.finding(
+                        sf,
+                        f"jobs.{job_name}",
+                        f"reusable workflow '{uses}' is pinned to the mutable ref '{ref}'",
+                    )
+                )
         for job_name, index, step in _steps(doc):
             uses = step.get("uses")
-            if not isinstance(uses, str) or "@" not in uses:
-                continue  # a local action (./path) or no ref
-            ref = uses.rsplit("@", 1)[1]
-            if ref.lower() in _MUTABLE_BRANCHES:
+            ref = _mutable_ref(uses)
+            if ref is not None:
                 findings.append(
                     TL028.finding(
                         sf,
@@ -110,7 +133,7 @@ TL016 = Rule(
     id="TL016",
     title="pull_request_target checks out untrusted PR code",
     severity=Severity.CRITICAL,
-    description="A workflow triggered by pull_request_target checks out the pull request head ref/sha.",
+    description="A workflow triggered by pull_request_target checks out the pull request head ref/sha (or its refs/pull/<n> merge ref).",
     rationale="pull_request_target runs with repository secrets; executing attacker-controlled PR code with them is a known takeover pattern.",
     remediation="on: pull_request  # or keep pull_request_target but never check out the PR head",
     kinds=_GHA,
@@ -132,7 +155,7 @@ TL028 = Rule(
     id="TL028",
     title="Action pinned to a mutable branch",
     severity=Severity.HIGH,
-    description="A workflow step uses an action pinned to a mutable ref (@main, @master, ...) rather than a version tag or commit SHA.",
+    description="A workflow step uses an action, or a job calls a reusable workflow, pinned to a mutable ref (@main, @master, ...) rather than a version tag or commit SHA.",
     rationale="A mutable branch ref runs whatever code that branch holds at run time; if the action is compromised or retargeted, it executes in your workflow with its secrets.",
     remediation="uses: owner/action@<40-char commit SHA>  # or at least a version tag",
     kinds=_GHA,

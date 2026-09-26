@@ -192,7 +192,7 @@ def _check_tl032(sf: ScanFile) -> list[Finding]:
             if "$" in token:
                 continue  # variable port: unresolved, silent
             port, _, protocol = token.partition("/")
-            if port == "22" and protocol.lower() in ("", "tcp"):
+            if _covers_port(port, 22) and protocol.lower() in ("", "tcp"):
                 findings.append(
                     TL032.finding(
                         sf,
@@ -201,6 +201,14 @@ def _check_tl032(sf: ScanFile) -> list[Finding]:
                     )
                 )
     return findings
+
+
+def _covers_port(spec: str, port: int) -> bool:
+    """True when an EXPOSE port spec (``22`` or a ``20-25`` range) includes *port*."""
+    low, sep, high = spec.partition("-")
+    if not low.isdigit() or (sep and not high.isdigit()):
+        return False  # malformed: never guess
+    return int(low) <= port <= int(high if sep else low)
 
 
 def _split_tag(image: str) -> tuple[str, str | None]:
@@ -256,7 +264,7 @@ TL032 = Rule(
     id="TL032",
     title="Final image exposes the SSH port",
     severity=Severity.MEDIUM,
-    description="An EXPOSE instruction that applies to the final image declares port 22/tcp. Builder-stage EXPOSE directives are ignored.",
+    description="An EXPOSE instruction that applies to the final image declares port 22/tcp (alone or inside a port range). Builder-stage EXPOSE directives are ignored.",
     rationale="Serving SSH from inside a container widens the attack surface and bypasses the orchestrator's access and audit model; CIS Docker guidance is not to run sshd in containers.",
     remediation="Remove EXPOSE 22 and use docker exec / kubectl exec for debugging instead of SSH.",
     kinds=_DOCKER,
