@@ -27,7 +27,8 @@ under that name, with those module paths. See *Unreleased* for the rename.
   scanned clean (or reported unparseable) and now has a test that failed
   first:
   - Terraform: a `dynamic "ingress"` block with literal content (TL005); the
-    AWS provider v5 `aws_vpc_security_group_ingress_rule` resource (TL005);
+    AWS provider v5 `aws_vpc_security_group_ingress_rule` resource (TL005;
+    ICMP rules, whose ports are type and code, are not port exposures);
     the v4+ `aws_s3_bucket_acl` resource (TL001); IAM policies written as
     `jsonencode({...})` and `data "aws_iam_policy_document"` blocks (TL003,
     TL004; the latter anchored and line-resolved as

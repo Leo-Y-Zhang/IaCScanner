@@ -15,6 +15,7 @@ _PAB_FLAGS = ("block_public_acls", "block_public_policy", "ignore_public_acls", 
 _ADMIN_PORTS = {22: "SSH", 3389: "RDP"}
 _SECRET_NAME_RE = re.compile(r"password|secret|token|api_key|access_key|private_key", re.I)
 _WORLD_CIDRS = {"0.0.0.0/0", "::/0"}
+_ICMP_PROTOCOLS = {"icmp", "icmpv6", "1", "58"}
 
 
 def _check_tl001(sf: ScanFile) -> list[Finding]:
@@ -134,6 +135,8 @@ def _check_tl005(sf: ScanFile) -> list[Finding]:
     # AWS provider v5's one-rule-per-resource form: one CIDR per resource and
     # ip_protocol instead of protocol ("-1" = all protocols and ports).
     for _, name, body in _tf.resources(sf, "aws_vpc_security_group_ingress_rule"):
+        if str(body.get("ip_protocol", "")).lower() in _ICMP_PROTOCOLS:
+            continue  # from/to_port are ICMP type and code here, not ports
         normalized = {
             "protocol": body.get("ip_protocol", ""),
             "from_port": body.get("from_port", 0),

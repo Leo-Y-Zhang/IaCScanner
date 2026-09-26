@@ -114,6 +114,21 @@ resource "aws_vpc_security_group_ingress_rule" "office_ssh" {
   to_port           = 22
   ip_protocol       = "tcp"
 }
+
+# ICMP has no ports: with none given this is every ICMP type, not every port.
+resource "aws_vpc_security_group_ingress_rule" "ping" {
+  security_group_id = aws_security_group.sg.id
+  cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "icmp"
+}
+
+resource "aws_vpc_security_group_ingress_rule" "ping6" {
+  security_group_id = aws_security_group.sg.id
+  cidr_ipv6         = "::/0"
+  from_port         = 0
+  to_port           = 0
+  ip_protocol       = "58"
+}
 """)
     findings = _check("TL005", sf)
     assert sorted((f.location, f.message) for f in findings) == [
