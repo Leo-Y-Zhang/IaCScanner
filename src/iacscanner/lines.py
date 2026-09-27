@@ -3,11 +3,11 @@
 Maps each finding's structural anchor (its ``location``) to the 1-based
 source line of the structure it names:
 
-* Terraform ``type.name`` / ``variable.name`` addresses map to their block
+* Terraform ``type.name`` / ``data.type.name`` / ``variable.name`` addresses map to their block
   start line, read from the python-hcl2 lark parse tree (whose nodes carry
   position metadata).
 * Kubernetes ``Kind/name`` (plus ``container``/``volume``) anchors and
-  workflow ``jobs.<job>.steps[<i>]`` anchors map to their YAML node lines,
+  workflow ``jobs.<job>`` / ``jobs.<job>.steps[<i>]`` anchors map to their YAML node lines,
   captured by a mark-recording ``yaml.SafeLoader`` subclass.
 * Dockerfile ``stage[<label>].<CMD>[<n>]`` anchors map to their instruction
   start lines, recorded by the ``iacscanner.docker`` parser itself.
@@ -45,7 +45,8 @@ from iacscanner.models import (
     Finding,
     ScanFile,
 )
-from iacscanner.rules.kubernetes import WORKLOAD_PATHS, workload_label
+from iacscanner.parsers import IaCLoader
+from iacscanner.rules.kubernetes import WORKLOAD_PATHS, manifests, workload_label
 
 _LINE_ANCHOR_RE = re.compile(r"^line ([0-9]{1,9})$")
 
@@ -119,6 +120,8 @@ def _terraform_anchors(text: str) -> Iterator[tuple[str, int]]:
         labels = _block_labels(node)
         if len(labels) >= 3 and labels[0] == "resource":
             yield f"{labels[1]}.{labels[2]}", int(node.meta.line)
+        elif len(labels) >= 3 and labels[0] == "data":
+            yield f"data.{labels[1]}.{labels[2]}", int(node.meta.line)
         elif len(labels) >= 2 and labels[0] == "variable":
             yield f"variable.{labels[1]}", int(node.meta.line)
 
@@ -156,8 +159,8 @@ class _MarkedMapping(dict[Any, Any]):
     line: int = 0
 
 
-class _MarkedLoader(yaml.SafeLoader):
-    """SafeLoader that constructs mappings as line-marked _MarkedMapping."""
+class _MarkedLoader(IaCLoader):
+    """The scanner's YAML loader, constructing mappings as line-marked _MarkedMapping."""
 
 
 def _construct_marked_mapping(
@@ -183,7 +186,9 @@ def _marked_documents(text: str) -> Iterator[_MarkedMapping]:
 
 def _kubernetes_anchors(text: str) -> Iterator[tuple[str, int]]:
     """Yield (anchor, line) mirroring the Kubernetes rules' anchor scheme."""
-    for doc in _marked_documents(text):
+    for doc in manifests(_marked_documents(text)):
+        if not isinstance(doc, _MarkedMapping):
+            continue
         kind = doc.get("kind")
         if not isinstance(kind, str):
             continue
@@ -214,8 +219,9 @@ def _workflow_anchors(text: str) -> Iterator[tuple[str, int]]:
         if not isinstance(jobs, dict):
             continue
         for job_name, job in jobs.items():
-            if not isinstance(job, dict):
+            if not isinstance(job, _MarkedMapping):
                 continue
+            yield f"jobs.{job_name}", job.line
             for index, step in enumerate(job.get("steps") or []):
                 if isinstance(step, _MarkedMapping):
                     yield f"jobs.{job_name}.steps[{index}]", step.line

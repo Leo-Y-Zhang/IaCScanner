@@ -23,6 +23,39 @@ under that name, with those module paths. See *Unreleased* for the rename.
 
 ### Fixed
 
+- **Realistic IaC spellings slipped past the rules.** Each of these was
+  scanned clean (or reported unparseable) and now has a test that failed
+  first:
+  - Terraform: a `dynamic "ingress"` block with literal content (TL005); the
+    AWS provider v5 `aws_vpc_security_group_ingress_rule` resource (TL005;
+    ICMP rules, whose ports are type and code, are not port exposures);
+    the v4+ `aws_s3_bucket_acl` resource (TL001); IAM policies written as
+    `jsonencode({...})` and `data "aws_iam_policy_document"` blocks (TL003,
+    TL004; the latter anchored and line-resolved as
+    `data.aws_iam_policy_document.<name>`). Reading `jsonencode` needs
+    `python-hcl2` 8.1.3 (8.1.2 drops the quotes inside serialized
+    expressions), so the floor moves from 8.1.2 to 8.1.3 and the CI floor job
+    pins 8.1.3.
+  - Kubernetes: `kind: List` wrappers (`kubectl get -o yaml`) hid every
+    workload in `items`, and JSON manifests were scanned as plain JSON.
+  - GitHub Actions: TL016 missed `ref: ${{ github.head_ref }}` and
+    `refs/pull/<n>/merge` checkouts; TL028 ignored job-level reusable
+    workflows (`jobs.<id>.uses: org/repo/.github/workflows/x.yml@main`).
+  - Dockerfile: TL032 missed `EXPOSE` port ranges covering 22 (`20-25`).
+  - A UTF-8 byte-order mark made a Dockerfile silently yield nothing
+    (`\ufeffFROM` is not an instruction) and made Terraform and JSON files
+    fail to parse. Files are now read as `utf-8-sig`; line numbers are
+    unchanged.
+- **CloudFormation templates were reported as unparseable.** YAML is still
+  loaded with SafeLoader construction only, but the short-form intrinsic tags
+  (`!Ref`, `!Sub`, `!GetAtt`, ...) now build their long-form mappings, so a
+  template scans (TL018 still sees its literals) instead of adding a TL000
+  finding and forcing exit code 2. Any other unknown tag is still a reported
+  parse error.
+- **An unwritable `--out` path crashed with a traceback and exit code 1,**
+  the code that means "findings". It now prints an error and exits 2, like an
+  unwritable baseline file.
+
 - **The declared `python-hcl2` floor was four majors below what the code
   needs, and the near misses were silent.** `pyproject.toml` asked for
   `python-hcl2>=4.3` while `parsers.py` imports `SerializationOptions` and

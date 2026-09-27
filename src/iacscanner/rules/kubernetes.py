@@ -1,7 +1,7 @@
 """Kubernetes manifest rules: TL011-TL015."""
 from __future__ import annotations
 
-from collections.abc import Iterator
+from collections.abc import Iterable, Iterator
 from typing import Any
 
 from iacscanner.models import KIND_KUBERNETES, Finding, Rule, ScanFile, Severity
@@ -30,12 +30,28 @@ def workload_label(doc: dict[str, Any], kind: str) -> str:
     return f"{kind}/{name}"
 
 
-def _pod_specs(sf: ScanFile) -> Iterator[tuple[str, dict[str, Any]]]:
-    """Yield (label, pod_spec) for every workload document in *sf*."""
-    docs = sf.data if isinstance(sf.data, list) else []
+def manifests(docs: Iterable[Any]) -> Iterator[dict[Any, Any]]:
+    """Every manifest mapping in *docs*, with list wrappers opened.
+
+    ``kubectl get -o yaml`` (and the API's ``DeploymentList`` etc.) wraps the
+    real objects in a ``kind: List`` document whose ``items`` hold them; the
+    items are yielded in place of the wrapper. Shared with the line resolver.
+    """
     for doc in docs:
         if not isinstance(doc, dict):
             continue
+        kind = doc.get("kind")
+        items = doc.get("items")
+        if isinstance(kind, str) and kind.endswith("List") and isinstance(items, list):
+            yield from (item for item in items if isinstance(item, dict))
+        else:
+            yield doc
+
+
+def _pod_specs(sf: ScanFile) -> Iterator[tuple[str, dict[str, Any]]]:
+    """Yield (label, pod_spec) for every workload document in *sf*."""
+    docs = sf.data if isinstance(sf.data, list) else []
+    for doc in manifests(docs):
         kind = doc.get("kind")
         if not isinstance(kind, str):
             continue

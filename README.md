@@ -29,16 +29,20 @@ baseline workflow (below) that lets CI fail only on *new* misconfigurations.
   references and a confidence level, across five areas:
   - **Terraform (AWS-style)**: public S3 ACLs and missing/weak public access
     block, no S3 server-side encryption/versioning/logging, IAM wildcard
-    actions/principals, world-open security groups on SSH/RDP/all ports,
+    actions/principals (JSON, heredoc, `jsonencode` and
+    `aws_iam_policy_document`), world-open security groups on SSH/RDP/all
+    ports (inline, `dynamic`, and the per-rule resources),
     unencrypted EBS/RDS/EFS, CloudTrail logging disabled, publicly accessible
     RDS, hardcoded secrets, KMS rotation off, ECR scan-on-push off, IMDSv2 not
     enforced, DynamoDB PITR off, RDS backups disabled.
   - **Kubernetes**: privileged containers, `runAsNonRoot` missing/false,
     `runAsUser`/`fsGroup: 0`, `hostNetwork`/`hostPID`/`hostIPC`/`hostPath`
-    mounts, missing resource limits, `:latest`/untagged images.
+    mounts, missing resource limits, `:latest`/untagged images - in YAML or
+    JSON manifests, including `kind: List` exports from `kubectl get`.
   - **GitHub Actions**: `pull_request_target` combined with a PR-head
-    checkout ("pwn request"), secrets echoed into build logs, actions pinned
-    to a mutable branch instead of a tag or commit SHA.
+    checkout ("pwn request"), secrets echoed into build logs, actions and
+    reusable workflows pinned to a mutable branch instead of a tag or commit
+    SHA.
   - **Dockerfile**: final image runs as root, secret-looking literal ENV
     baked into the final image, mutable/untagged external base tag, SSH
     port exposed - each scoped to the **final-image stage chain** so
@@ -100,8 +104,8 @@ baseline workflow (below) that lets CI fail only on *new* misconfigurations.
   under load, the committed sample report/SARIF are drift-tested against a
   fresh render, and a derandomized Hypothesis suite feeds adversarial text
   through the Dockerfile parser, rules, line attachment, suppressions,
-  SARIF rendering and whole scans (423 pytest tests, ruff + mypy `--strict`
-  clean). Containment is proved twice over with real links, so **421 passed,
+  SARIF rendering and whole scans (457 pytest tests, ruff + mypy `--strict`
+  clean). Containment is proved twice over with real links, so **455 passed,
   2 skipped** is the expected result on *either* platform: the two
   real-symlink discovery tests skip on Windows without the symlink-creation
   privilege, and the two real-NTFS-junction tests skip everywhere that is not
@@ -110,11 +114,12 @@ baseline workflow (below) that lets CI fail only on *new* misconfigurations.
 ## Install
 
 Requires Python 3.10+ (developed on 3.13). Runtime dependencies:
-`python-hcl2>=8.1.2` and `pyyaml>=6.0.2` only — no daemon, no cloud SDK, no
+`python-hcl2>=8.1.3` and `pyyaml>=6.0.2` only — no daemon, no cloud SDK, no
 binary toolchain, nothing to configure. Those floors are tested rather than
 declared: a separate CI job installs exactly them and runs the whole suite,
 because an older `python-hcl2` returns HCL booleans as the strings `"true"` and
-`"false"` and quietly changes what the rules conclude.
+`"false"`, or drops the quotes inside `jsonencode(...)` policies, and quietly
+changes what the rules conclude.
 
 ```bash
 python -m venv .venv
@@ -213,7 +218,7 @@ pytest
 | --- | --- |
 | 0 | No findings at or above the `--fail-on` threshold |
 | 1 | At least one reported finding at or above `--fail-on` (default: `high`) |
-| 2 | Usage error, path not found, malformed/unwritable baseline file, or one or more files failed to parse |
+| 2 | Usage error, path not found, malformed/unwritable baseline file, unwritable `--out` report file, or one or more files failed to parse |
 
 Exit code 2 takes precedence over 1. `--min-severity` hides findings from
 the report **and** from scoring and `--fail-on` evaluation. With
@@ -484,7 +489,7 @@ src/iacscanner/
   graph.py           cross-file ResourceGraph + resolve() + frozen ScanContext
   models.py          Severity, Confidence, ScanFile, Rule, Finding dataclasses
   metadata.py        curated per-rule CWE + CIS Controls v8 + confidence table
-  parsers.py         file discovery + HCL/YAML/JSON/Dockerfile parsing (safe_load only)
+  parsers.py         file discovery + HCL/YAML/JSON/Dockerfile parsing (SafeLoader only)
   docker.py          stdlib-only multi-stage Dockerfile parser (heredocs, continuations, ARG substitution)
   lines.py           structural-anchor -> source-line resolver (omits, never guesses)
   scanner.py         orchestration: parse, build context, run rules, suppress, resolve lines, sort
@@ -550,10 +555,11 @@ it always did**, and the pinned regression test in `tests/data/` proves it.
 - **Offline**: no network access of any kind; no telemetry; no cloud SDKs.
 - **No credentials**: nothing to configure, nothing to leak. The scanner
   works purely on file content.
-- YAML is parsed exclusively with SafeLoader construction: `yaml.safe_load_all`
-  for scanning, and the line resolver uses a `SafeLoader` subclass whose only
-  change is remembering each mapping's source line (still no object
-  instantiation).
+- YAML is parsed exclusively with SafeLoader construction: scanning uses a
+  `SafeLoader` subclass whose only addition is CloudFormation's short-form
+  intrinsic tags (`!Ref`, `!Sub`, `!GetAtt` ... built as their plain long-form
+  mappings), and the line resolver extends that loader only to remember each
+  mapping's source line (still no object instantiation).
 - Secret-looking values found by TL018 are masked in reports (only a short
   prefix is shown).
 - All fixture data is synthetic: account id `123456789012`, hosts under
@@ -572,8 +578,8 @@ What it defends against:
 
 - **No code execution from input.** Terraform is parsed with `python-hcl2`
   (a Lark grammar, no `eval`/`exec`); YAML uses SafeLoader construction only -
-  `yaml.safe_load_all` for scanning and a line-marking `SafeLoader` subclass
-  in the resolver (never full `yaml.load`, so no arbitrary object
+  a `SafeLoader` subclass that adds nothing but CloudFormation's short-form
+  tags for scanning, and a line-marking subclass of it in the resolver (never full `yaml.load`, so no arbitrary object
   construction / RCE); JSON uses the standard library. IaCScanner never imports
   `hcl2.query` and so never reaches its expression evaluator.
 - **No network, no credentials.** IaCScanner opens no sockets, ships no cloud

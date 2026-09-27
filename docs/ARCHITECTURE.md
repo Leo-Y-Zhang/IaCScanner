@@ -18,7 +18,7 @@ parsers.discover ----> a bounded, sorted list of ScanFile paths
     |                   (realpath-confined to the scan root; no symlink/junction escape)
     v
 parsers.parse_file --> ScanFile{path, kind, data, text, error}
-    |                   HCL via python-hcl2, YAML via safe_load_all, JSON via stdlib,
+    |                   HCL via python-hcl2, YAML via a SafeLoader subclass, JSON via stdlib,
     |                   Dockerfiles via the stdlib-only parser in docker.py
     v
 graph.ScanContext.build(files) --> ResourceGraph over ALL Terraform files
@@ -145,9 +145,9 @@ per format), `tests/test_stress.py` (byte-identical + sub-quadratic on a
 - **Bounded to the scan root.** Discovery resolves every path with
   `os.path.realpath` and requires it to stay within the root, pruning POSIX
   symlinks and Windows NTFS junctions alike, with a `seen`-set loop guard.
-- **Safe parsing.** YAML uses SafeLoader construction only (`safe_load_all`
-  for scanning; the line resolver's SafeLoader subclass merely records each
-  mapping's line); HCL uses python-hcl2's grammar (no `eval`/`exec`);
+- **Safe parsing.** YAML uses SafeLoader construction only (a SafeLoader
+  subclass that adds only CloudFormation's short-form tags for scanning; the
+  line resolver's subclass of it merely records each mapping's line); HCL uses python-hcl2's grammar (no `eval`/`exec`);
   malformed or deeply-nested input degrades to a `TL000` finding instead of
   crashing, and any failure inside the line resolver omits the line rather
   than raising.

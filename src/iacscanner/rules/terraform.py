@@ -15,12 +15,14 @@ _PAB_FLAGS = ("block_public_acls", "block_public_policy", "ignore_public_acls", 
 _ADMIN_PORTS = {22: "SSH", 3389: "RDP"}
 _SECRET_NAME_RE = re.compile(r"password|secret|token|api_key|access_key|private_key", re.I)
 _WORLD_CIDRS = {"0.0.0.0/0", "::/0"}
+_ICMP_PROTOCOLS = {"icmp", "icmpv6", "1", "58"}
 
 
 def _check_tl001(sf: ScanFile) -> list[Finding]:
+    # AWS provider v4+ moved the ACL into its own aws_s3_bucket_acl resource.
     return [
-        TL001.finding(sf, f"aws_s3_bucket.{name}", f"bucket ACL is '{body['acl']}'")
-        for _, name, body in _tf.resources(sf, "aws_s3_bucket")
+        TL001.finding(sf, f"{rtype}.{name}", f"bucket ACL is '{body['acl']}'")
+        for rtype, name, body in _tf.resources(sf, "aws_s3_bucket", "aws_s3_bucket_acl")
         if body.get("acl") in _PUBLIC_ACLS
     ]
 
@@ -118,7 +120,7 @@ def _exposed_service(rule_block: dict[str, Any]) -> str | None:
 def _check_tl005(sf: ScanFile) -> list[Finding]:
     findings = []
     for _, name, body in _tf.resources(sf, "aws_security_group"):
-        for rule_block in _tf.blocks(body, "ingress"):
+        for rule_block in _tf.blocks(body, "ingress") + _tf.dynamic_contents(body, "ingress"):
             service = _exposed_service(rule_block)
             if service and _open_to_world(rule_block):
                 findings.append(
@@ -129,6 +131,26 @@ def _check_tl005(sf: ScanFile) -> list[Finding]:
         if body.get("type") == "ingress" and service and _open_to_world(body):
             findings.append(
                 TL005.finding(sf, f"aws_security_group_rule.{name}", f"ingress open to the world on {service}", sub_key=service)
+            )
+    # AWS provider v5's one-rule-per-resource form: one CIDR per resource and
+    # ip_protocol instead of protocol ("-1" = all protocols and ports).
+    for _, name, body in _tf.resources(sf, "aws_vpc_security_group_ingress_rule"):
+        if str(body.get("ip_protocol", "")).lower() in _ICMP_PROTOCOLS:
+            continue  # from/to_port are ICMP type and code here, not ports
+        normalized = {
+            "protocol": body.get("ip_protocol", ""),
+            "from_port": body.get("from_port", 0),
+            "to_port": body.get("to_port", 0),
+            "cidr_blocks": body.get("cidr_ipv4"),
+            "ipv6_cidr_blocks": body.get("cidr_ipv6"),
+        }
+        service = _exposed_service(normalized)
+        if service and _open_to_world(normalized):
+            findings.append(
+                TL005.finding(
+                    sf, f"aws_vpc_security_group_ingress_rule.{name}", f"ingress open to the world on {service}",
+                    sub_key=service,
+                )
             )
     return findings
 
@@ -298,7 +320,7 @@ TL001 = Rule(
     id="TL001",
     title="S3 bucket has a public ACL",
     severity=Severity.CRITICAL,
-    description="An aws_s3_bucket sets acl to public-read or public-read-write.",
+    description="An aws_s3_bucket or aws_s3_bucket_acl sets acl to public-read or public-read-write.",
     rationale="Public bucket ACLs expose every object to anonymous readers and are a leading cause of data leaks.",
     remediation='acl = "private"',
     kinds=_TF,
@@ -327,7 +349,7 @@ TL003 = Rule(
     id="TL003",
     title="IAM policy allows wildcard actions",
     severity=Severity.HIGH,
-    description="An IAM policy document contains an Allow statement with Action '*' or '*:*'.",
+    description="An IAM policy document (JSON, heredoc, jsonencode or aws_iam_policy_document) contains an Allow statement with Action '*' or '*:*'.",
     rationale="Wildcard actions grant far more than intended and defeat least-privilege review.",
     remediation='"Action": ["s3:GetObject"]  // list only the actions actually needed',
     kinds=_TF,
@@ -349,7 +371,7 @@ TL005 = Rule(
     id="TL005",
     title="Security group open to the world on an admin port",
     severity=Severity.CRITICAL,
-    description="A security group ingress rule allows 0.0.0.0/0 or ::/0 on SSH (22), RDP (3389), or all ports.",
+    description="A security group ingress rule (inline, dynamic, aws_security_group_rule or aws_vpc_security_group_ingress_rule) allows 0.0.0.0/0 or ::/0 on SSH (22), RDP (3389), or all ports.",
     rationale="World-open admin ports are scanned and brute-forced within minutes of exposure.",
     remediation='cidr_blocks = ["10.0.0.0/16"]  # restrict to a trusted range or use SSM/VPN',
     kinds=_TF,

@@ -16,8 +16,11 @@ dependencies = [
     # and "false". Every earlier release parses, so the failure is silent and lands
     # in the findings: on 8.1.1 the whole rule set misjudges booleans in both
     # directions. SerializationOptions and parses_to_tree do not exist at all before
-    # 8.x, so anything under 8 is an ImportError. See the floor job in CI.
-    "python-hcl2>=8.1.2,<9",
+    # 8.x, so anything under 8 is an ImportError. 8.1.2 still strips the quotes
+    # inside serialized expressions (jsonencode({Effect = "Allow"}) comes back as
+    # jsonencode({Effect = Allow})), so TL003/TL004 cannot read a jsonencode policy
+    # there; 8.1.3 keeps them. See the floor job in CI.
+    "python-hcl2>=8.1.3,<9",
     # 6.0.2 is the first release with a cp313 wheel; 6.0 cannot even build there.
     "pyyaml>=6.0.2",
 ]

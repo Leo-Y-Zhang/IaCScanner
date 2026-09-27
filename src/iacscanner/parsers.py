@@ -1,12 +1,23 @@
 """Read-only file discovery and parsing.
 
 Nothing here executes code, follows URLs, or writes anywhere. Terraform is
-parsed with python-hcl2, YAML strictly with ``yaml.safe_load_all``, JSON
-with the standard library, and Dockerfiles (``Dockerfile``,
+parsed with python-hcl2, YAML strictly with a ``yaml.SafeLoader`` subclass
+(:class:`IaCLoader`, below), JSON
+with the standard library (a JSON object that is a Kubernetes manifest -
+``apiVersion`` plus ``kind`` - is classified as Kubernetes, like its YAML
+spelling), and Dockerfiles (``Dockerfile``,
 ``Containerfile``, ``*.dockerfile``, and ``Dockerfile.<variant>`` /
 ``Containerfile.<variant>`` names whose extension is not another scanned
 kind) with the stdlib-only parser in ``iacscanner.docker``. A file that fails
 to parse yields a ScanFile carrying an ``error`` summary instead of raising.
+
+Text is decoded as UTF-8 with an optional leading byte-order mark removed, as
+Docker, Terraform and PyYAML all accept it. The YAML loader is ``SafeLoader``
+plus exactly one extension: CloudFormation's short-form intrinsic-function tags
+(``!Ref``, ``!Sub``, ``!GetAtt`` ...) construct their documented long form
+(``{"Ref": ...}``, ``{"Fn::Sub": ...}``), so a template is scanned instead of
+being reported as unparseable. Every other application tag is still a parse
+error.
 """
 from __future__ import annotations
 
@@ -33,6 +44,56 @@ from iacscanner.models import (
 SCAN_SUFFIXES = (".tf", ".yaml", ".yml", ".json")
 _SKIP_DIRS = {".git", ".venv", "venv", "node_modules", "__pycache__", ".terraform", ".pytest_cache"}
 
+# CloudFormation short-form intrinsic functions: tag -> long-form key.
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html
+_CFN_TAGS = {
+    "!Ref": "Ref",
+    "!Condition": "Condition",
+    **{
+        f"!{name}": f"Fn::{name}"
+        for name in (
+            "And", "Base64", "Cidr", "Equals", "FindInMap", "ForEach", "GetAtt", "GetAZs",
+            "If", "ImportValue", "Join", "Length", "Not", "Or", "Select", "Split", "Sub",
+            "ToJsonString", "Transform",
+        )
+    },
+}
+
+
+class IaCLoader(yaml.SafeLoader):
+    """``yaml.SafeLoader`` that also understands CloudFormation short-form tags.
+
+    Nothing else is added: python/object tags stay refused, and any other
+    unknown tag is still a ConstructorError (a reported parse failure).
+    """
+
+
+def _construct_cfn(loader: IaCLoader, node: yaml.Node) -> dict[str, Any]:
+    key = _CFN_TAGS[node.tag]
+    value: Any
+    if isinstance(node, yaml.ScalarNode):
+        value = loader.construct_scalar(node)
+        if key == "Fn::GetAtt":
+            # The short form's scalar spelling is "Resource.Attribute"; the
+            # long form is always the two-item list.
+            value = value.split(".", 1)
+    elif isinstance(node, yaml.SequenceNode):
+        value = loader.construct_sequence(node, deep=True)
+    else:
+        assert isinstance(node, yaml.MappingNode)
+        value = loader.construct_mapping(node, deep=True)
+    return {key: value}
+
+
+for _tag in _CFN_TAGS:
+    IaCLoader.add_constructor(_tag, _construct_cfn)
+
+
+def load_yaml_documents(text: str) -> list[Any]:
+    """Every non-empty YAML document in *text*, parsed with :class:`IaCLoader`."""
+    return [doc for doc in yaml.load_all(text, Loader=IaCLoader) if doc is not None]
+
+
 # Backwards-compatible python-hcl2 output: plain keys/values, blocks as
 # lists of dicts, no metadata markers.
 _HCL2_OPTIONS = SerializationOptions(
@@ -41,6 +102,11 @@ _HCL2_OPTIONS = SerializationOptions(
     preserve_heredocs=True,
     strip_string_quotes=True,
 )
+
+
+def parse_hcl(text: str) -> Any:
+    """Parse HCL *text* with the scanner's python-hcl2 serialization options."""
+    return hcl2.loads(text, serialization_options=_HCL2_OPTIONS)
 
 
 def _within(child_real: str, root_real: str) -> bool:
@@ -120,7 +186,10 @@ def discover(target: Path) -> list[Path]:
 def parse_file(path: Path, display: str) -> ScanFile:
     """Parse *path* into a ScanFile; parse failures set ``error``."""
     try:
-        text = path.read_text(encoding="utf-8")
+        # utf-8-sig drops one leading byte-order mark (Windows editors write
+        # it); otherwise "\ufeffFROM" is not an instruction and the whole
+        # Dockerfile is silently skipped, and HCL/JSON refuse to parse.
+        text = path.read_text(encoding="utf-8-sig")
     except (OSError, UnicodeDecodeError) as exc:
         return ScanFile(path=display, kind=KIND_YAML, data=None, text="", error=_summary(exc))
 
@@ -131,20 +200,29 @@ def parse_file(path: Path, display: str) -> ScanFile:
                 path=display, kind=KIND_DOCKERFILE, data=parse_dockerfile(text), text=text
             )
         if suffix == ".tf":
-            data: Any = hcl2.loads(text, serialization_options=_HCL2_OPTIONS)
+            data: Any = parse_hcl(text)
             return ScanFile(path=display, kind=KIND_TERRAFORM, data=data, text=text)
         if suffix == ".json":
-            return ScanFile(path=display, kind=KIND_JSON, data=json.loads(text), text=text)
-        docs = [doc for doc in yaml.safe_load_all(text) if doc is not None]
+            data = json.loads(text)
+            if _is_manifest(data):
+                # kubectl accepts JSON manifests (and `kubectl get -o json`
+                # emits them); scan them with the Kubernetes rules.
+                return ScanFile(path=display, kind=KIND_KUBERNETES, data=[data], text=text)
+            return ScanFile(path=display, kind=KIND_JSON, data=data, text=text)
+        docs = load_yaml_documents(text)
         return ScanFile(path=display, kind=_yaml_kind(docs), data=docs, text=text)
     except Exception as exc:  # parser-specific errors vary; never crash a scan
         return ScanFile(path=display, kind=KIND_YAML, data=None, text=text, error=_summary(exc))
 
 
+def _is_manifest(doc: Any) -> bool:
+    return isinstance(doc, dict) and "apiVersion" in doc and "kind" in doc
+
+
 def _yaml_kind(docs: list[Any]) -> str:
     """Classify YAML documents as Kubernetes, GitHub Actions, or generic."""
     dicts = [doc for doc in docs if isinstance(doc, dict)]
-    if any("apiVersion" in doc and "kind" in doc for doc in dicts):
+    if any(_is_manifest(doc) for doc in dicts):
         return KIND_KUBERNETES
     if any("jobs" in doc for doc in dicts):
         return KIND_GITHUB_ACTIONS

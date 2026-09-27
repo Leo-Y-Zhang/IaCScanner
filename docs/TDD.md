@@ -60,9 +60,10 @@ and `rglob` only stopped following symlinks by default in 3.13. One check covers
 all of them everywhere.
 
 The second boundary is parsing. YAML uses SafeLoader construction only —
-`yaml.safe_load_all` for scanning, and a `SafeLoader` subclass in the line
-resolver whose sole change is recording each mapping's source line, so still no
-object instantiation. HCL goes through `python-hcl2`'s Lark grammar, and the code
+a `SafeLoader` subclass for scanning whose sole addition is CloudFormation's
+short-form tags (built as plain long-form mappings), and a subclass of that in
+the line resolver whose sole change is recording each mapping's source line, so
+still no object instantiation. HCL goes through `python-hcl2`'s Lark grammar, and the code
 never imports `hcl2.query`, so it never reaches that expression evaluator. JSON
 is stdlib. **No input path reaches `eval`, `exec` or `yaml.load`.**
 
