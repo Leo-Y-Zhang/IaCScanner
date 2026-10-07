@@ -513,7 +513,7 @@ examples/
   secure-docker/     hardened Dockerfile (deliberate builder-stage decoys)
   sample-report.md   committed markdown report generated from the fixtures
   sample.sarif       committed SARIF 2.1.0 report generated from the fixtures
-tests/               422 tests: rules, graph, scoring, parsers, lines, reports, baseline,
+tests/               457 tests: rules, graph, scoring, parsers, lines, reports, baseline,
                      SARIF, policy, suppress, stress/determinism, drift, CLI e2e,
                      property-based robustness (Hypothesis, derandomized)
 ```
